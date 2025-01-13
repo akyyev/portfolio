@@ -178,5 +178,20 @@ themeButton.addEventListener("click", () => {
   localStorage.setItem("selected-icon", getCurrentIcon());
 });
 
+
+// Date 
 const currentYear = new Date().getFullYear(); 
 document.getElementById("year").textContent = currentYear;
+
+// email
+const sendEmailBtn = document.getElementById('sendEmail');
+const messageInput = document.getElementById('message');
+
+sendEmailBtn.addEventListener('click', function () {
+  const message = encodeURIComponent(messageInput.value); // Encode the message for URL safety
+  const subject = 'Message from my Portfolio Website'; // Static subject
+  const body = `Message: ${message}`; 
+
+  const mailtoHref = `mailto:ba.akyyev@gmail.com?subject=${encodeURIComponent(subject)}&body=${body}`;
+  sendEmailBtn.href = mailtoHref;
+});
