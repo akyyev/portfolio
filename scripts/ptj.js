@@ -139,14 +139,34 @@ document.getElementById("year").textContent = new Date().getFullYear();
 
 /*==================== EMAIL FUNCTIONALITY ====================*/
 const sendEmailBtn = document.getElementById("sendEmail");
-const messageInput = document.getElementById("message");
+const message = document.getElementById("message");
+const userName = document.getElementById("userName");
+const email = document.getElementById("email");
 
-sendEmailBtn.addEventListener("click", () => {
-  const message = encodeURIComponent(messageInput.value);
-  const subject = "Message from my Portfolio Website";
-  const body = `Message: ${message}`;
+sendEmailBtn.addEventListener("click", async () => {
+    if(!userName.value || !email.value || !message.value) {
+      alert("Please fill in all fields!");
+      return;
+    }
+    const response = await fetch('https://formspree.io/f/xyzzawnd', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        subject: "Message from my Portfolio Website",
+        name: userName.value,
+        email: email.value,
+        message: message.value
+      }),
+    });
 
-  sendEmailBtn.href = `mailto:ba.akyyev@gmail.com?subject=${encodeURIComponent(
-    subject,
-  )}&body=${body}`;
+    if(response.ok) {
+      alert("Message delivered successfully!");
+      message.value = "";
+      email.value = "";
+      userName.value = "";
+    } else {
+      const result = await response.json();
+      alert("Failed to send message, Error: " + result.errors[0].message);
+    }
+    
 });
