@@ -152,7 +152,7 @@ sendEmailBtn.addEventListener("click", async () => {
       method: 'POST',
       headers: { 'Content-Type': 'application/json'},
       body: JSON.stringify({
-        subject: "Message from my Portfolio Website",
+        subject: "Portfolio Contact Form, Email: " + email.value,
         name: userName.value,
         email: email.value,
         message: message.value
