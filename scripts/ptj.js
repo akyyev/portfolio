@@ -118,7 +118,14 @@ function getItemWithTTL(key) {
   if (!itemStr) {
     return null;
   }
-  const item = JSON.parse(itemStr);
+  let item;
+  try {
+    item = JSON.parse(itemStr);
+  } catch (e) {
+    console.error('Error parsing JSON from localStorage', e);
+    localStorage.removeItem(key);
+    return null;
+  }
   if (new Date().getTime() > item.expiry) {
     localStorage.removeItem(key);
     return null;
