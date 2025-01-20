@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Portfolio</title>
+  <link rel="stylesheet" href="css/swiper-bundle.min.css" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.8/css/line.css" />
+  <link rel="icon" type="image/x-icon" href="./assets/favicon.ico">
+</head>
+
+<body oncontextmenu="return false" class="preload">
+  <header class="header" id="header">
+    <nav class="nav container">
+      <a href="/index.html" class="nav__logo">Bagtyyar</a>
+      <div class="nav__menu" id="nav-menu">
+        <ul class="nav__list grid">
+          <li class="nav__item">
+            <a href="/index.html" class="nav__link active-link">
+              <i class="uil uil-estate nav__icon"></i>Home
+            </a>
+          </li>
+          <li class="nav__item">
+            <a href="/blogs" class="nav__link">
+              <i class="uil uil-blogger nav__icon"></i>Blogs
+            </a>
+          </li>
+        </ul>
+        <i class="uil uil-times nav__close" id="nav-close"></i>
+      </div>
+      <div class="nav__btns">
+        <!-- Theme change button -->
+        <i class="uil uil-moon change-theme" id="theme-button"></i>
+
+        <div class="nav__toggle" id="nav-toggle">
+          <i class="uil uil-apps"></i>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <!--================== Blogs Section ===============-->
+  <section class="blogs section" id="blogs">
+    <h2 class="section__title">Blogs</h2>
+    <span class="section__subtitle">My latest posts</span>
+
+    <div class="blogs__container container grid">
+      <article class="blogs__content">
+        <h3 class="blogs__title">Functional Testing with Test Containers</h3>
+        <span class="blogs__date">October 10, 2023</span>
+        <p class="blogs__description">
+          Test Containers is a Java library that supports JUnit tests, providing lightweight, throwaway instances of common databases, Selenium web browsers, or anything else that can run in a Docker container.
+        </p>
+        <a href="#" class="blogs__button">Read More</a>
+      </article>
+
+      <!-- Add more blog posts here -->
+    </div>
+  </section>
+
+  <!--================== Footer ===============-->
+  <footer class="footer">
+    <div class="footer__bg">
+      <div class="footer__container container grid">
+        <div>
+          <h1 class="footer__title">Bagtyyar</h1>
+          <span class="footer__subtitle">Software Engineer III at Walmart</span>
+        </div>
+
+        <ul class="footer__links">
+          <li>
+            <a href="#qualification" class="footer__link">Qualification</a>
+          </li>
+          <li>
+            <a href="#portfolio" class="footer__link">Portfolio</a>
+          </li>
+          <li>
+            <a href="#contact" class="footer__link">Contact-Me</a>
+          </li>
+        </ul>
+      </div>
+
+      <p class="footer__copy">&copy; <span id="year"></span> Bagtyyar. All rights reserved</p>
+    </div>
+  </footer>
+
+  <!--================== SCROLL TOP ==================-->
+  <a href="#" class="scrollup" id="scroll-up">
+    <i class="uil uil-arrow-up scrollup__icon"></i>
+  </a>
+
+  <script type="text/javascript" src="scripts/swiper-bundle.min.js"></script>
+  <script src="scripts/ptj.js"></script>
+</body>
+
+</html>

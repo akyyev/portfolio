@@ -103,6 +103,29 @@ window.addEventListener("scroll", () => {
 });
 
 /*==================== DARK/LIGHT THEME ====================*/
+function setItemWithTTL(key, value, ttl) {
+  const now = new Date();
+  const item = {
+    value: value,
+    expiry: now.getTime() + ttl,
+  };
+  localStorage
+    .setItem(key, JSON.stringify(item));
+}
+
+function getItemWithTTL(key) {
+  const itemStr = localStorage.getItem(key);
+  if (!itemStr) {
+    return null;
+  }
+  const item = JSON.parse(itemStr);
+  if (new Date().getTime() > item.expiry) {
+    localStorage.removeItem(key);
+    return null;
+  }
+  return item.value;
+}
+
 const themeButton = document.getElementById("theme-button");
 const darkTheme = "dark-theme";
 const iconTheme = "uil-sun";
@@ -112,25 +135,31 @@ const hour = new Date().getHours();
 const defaultTheme = hour >= 6 && hour < 18 ? "light" : "dark";
 
 // Retrieve previously selected theme
-const selectedTheme = localStorage.getItem("selected-theme") || defaultTheme;
-const selectedIcon = localStorage.getItem("selected-icon") || (defaultTheme === "dark" ? "uil-moon" : "uil-sun");
+const selectedTheme = getItemWithTTL("selected-theme") || defaultTheme;
+const selectedIcon = getItemWithTTL("selected-icon") || (defaultTheme === "dark" ? "uil-moon" : "uil-sun");
 
 // Apply the theme
 document.body.classList[selectedTheme === "dark" ? "add" : "remove"](darkTheme);
 themeButton.classList[selectedIcon === "uil-moon" ? "add" : "remove"](iconTheme);
+
+// Wait for the page to load completely
+window.addEventListener('load', function () {
+  // Remove the 'preload' class from the <body>
+  document.body.classList.remove('preload');
+});
 
 // Toggle theme on button click
 themeButton.addEventListener("click", () => {
   document.body.classList.toggle(darkTheme);
   themeButton.classList.toggle(iconTheme);
 
-  localStorage.setItem(
+  setItemWithTTL(
     "selected-theme",
-    document.body.classList.contains(darkTheme) ? "dark" : "light",
+    document.body.classList.contains(darkTheme) ? "dark" : "light", 24 * 60 * 60 * 1000
   );
-  localStorage.setItem(
+  setItemWithTTL(
     "selected-icon",
-    themeButton.classList.contains(iconTheme) ? "uil-moon" : "uil-sun",
+    themeButton.classList.contains(iconTheme) ? "uil-moon" : "uil-sun", 24 * 60 * 60 * 1000
   );
 });
 

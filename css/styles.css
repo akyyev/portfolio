@@ -68,6 +68,11 @@
     --smaller-font-size: 0.813rem;
   }
 }
+
+/* The .preload class is used to hide the body content initially to prevent flash of unstyled content (FOUC) */
+body.preload {
+  visibility: hidden;
+}
 /*================= Variables Dark Theme ===============*/
 body.dark-theme {
   /*========= HSL Color mode =========*/
