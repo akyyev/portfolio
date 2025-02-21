@@ -1,0 +1,116 @@
+
+.contact_wrapper svg {
+  font-size: 1em;
+  vertical-align: middle;
+  margin-right: 5px;
+}
+
+.contact-form {
+  padding: 20px;
+  border-radius: 8px;
+  background-color: white;
+
+  button {
+    float: right;
+    background-color: white;
+    color: #050f0b;
+  }
+
+  button:hover {
+    background-color: #5000ca;
+    color: white;
+  }
+
+  /* fieldset { background-color: aliceblue; } */
+}
+
+label {
+  font-size: 1.2rem;
+  font-family: 'DomaineDispNar-Medium', sans-serif;
+}
+
+.form-flex {
+  display: flex;
+  gap: 15px;
+  padding-bottom: 15px;
+}
+
+.form-flex .MuiFormControl-root {
+  width: 100%;
+}
+
+form {
+  width: 100% !important;
+}
+
+.body-form {
+  width: 100% !important;
+  margin-bottom: 15px !important;
+}
+
+
+/*
+#contact {
+  // padding: 50px 0;
+  // background-color: #f9f9f9;
+
+  // .items-container {
+  //   max-width: 800px;
+  //   margin: 0 auto;
+  //   padding: 0 20px;
+  // }
+
+  .contact_wrapper {
+    background: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    p {
+      font-size: 1.2rem;
+      margin-bottom: 30px;
+      text-align: center;
+      color: #666;
+    }
+
+  }
+
+  .contact-form {
+    .form-flex {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 20px;
+
+      @media (max-width: 600px) {
+        flex-direction: column;
+      }
+
+      .MuiTextField-root {
+        flex: 1;
+      }
+    }
+
+    .body-form {
+      margin-bottom: 20px;
+    }
+
+    .MuiButton-root {
+      display: block;
+      width: 100%;
+      background-color: #5000ca;
+      color: #fff;
+
+      &:hover {
+        background-color: #3e00a8;
+      }
+    }
+  }
+}
+
+*/
