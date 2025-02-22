@@ -82,6 +82,7 @@ function Contact() {
                 value={name}
                 onChange={(e) => {
                   setName(e.target.value);
+                  if (e.target.value !== '') setNameError(false);
                 }}
                 error={nameError}
                 helperText={nameError ? "Please enter your name" : ""}
@@ -94,6 +95,7 @@ function Contact() {
                 value={email}
                 onChange={(e) => {
                   setEmail(e.target.value);
+                  if (e.target.value !== '') setEmailError(false);
                 }}
                 error={emailError}
                 helperText={emailError ? "Please enter your email or phone number" : ""}
@@ -110,6 +112,7 @@ function Contact() {
               value={message}
               onChange={(e) => {
                 setMessage(e.target.value);
+                if (e.target.value !== '') setMessageError(false);
               }}
               error={messageError}
               helperText={messageError ? "Please enter the message" : ""}
