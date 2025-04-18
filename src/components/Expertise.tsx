@@ -38,19 +38,19 @@ const labelsSecond = [
     "SonarQube",
     "Concord",
     "Snyk",
-    "Graphana",
+    "Grafana",
     "Prometheus"
 ];
 
 const labelsThird = [
+    "Test Driven Development",
     "Behavior-Driven Development",
+    "Event-Driven Development",
+    "Scalable Applications",
     "Cucumber",
     "Karate",
-    "Test Driven Development",
-    "Event-Driven Architecture",
     "Agile",
-    "Scrum",
-    "Scalable Applications"
+    "Scrum"
 ];
 
 function Expertise() {
