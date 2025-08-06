@@ -4,6 +4,8 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import SendIcon from '@mui/icons-material/Send';
 import TextField from '@mui/material/TextField';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert, { AlertColor } from '@mui/material/Alert';
 import { email as myEmail } from "../constants/cons";
 
 function Contact() {
@@ -15,6 +17,10 @@ function Contact() {
   const [nameError, setNameError] = useState<boolean>(false);
   const [emailError, setEmailError] = useState<boolean>(false);
   const [messageError, setMessageError] = useState<boolean>(false);
+
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMsg, setSnackbarMsg] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState<AlertColor>('success');
 
   const form = useRef();
 
@@ -45,10 +51,14 @@ function Contact() {
         response => {
           if(response.ok) {
             console.log('SUCCESS!', response.status, response.text);
-            alert("Message delivered successfully!");
+            setSnackbarMsg("Message delivered successfully!");
+            setSnackbarSeverity('success');
+            setSnackbarOpen(true);
           } else {
             console.log('FAILED...', response.status, response.text);
-            alert("Failed to send message, Error: " + response.text);
+            setSnackbarMsg("Failed to send message, try again later.");
+            setSnackbarSeverity('error');
+            setSnackbarOpen(true);
           }
         },
         error => console.log('FAILED...', error)
@@ -59,6 +69,11 @@ function Contact() {
       setMessage('');
     }
   };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
+
 
   return (
     <div id="contact">
@@ -123,6 +138,16 @@ function Contact() {
           </Box>
         </div>
       </div>
+       <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <MuiAlert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%' }}>
+          {snackbarMsg}
+        </MuiAlert>
+      </Snackbar>
     </div>
   );
 }
