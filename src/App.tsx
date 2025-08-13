@@ -11,6 +11,7 @@ import {
 import FadeIn from './components/FadeIn';
 import './index.scss';
 import { getItemWithTTL, setItemWithTTL } from "./utils/theme";
+import ChatbotWidget from './components/ChatbotWidget';
 
 function App() {
     // Determine the default theme based on time
@@ -45,6 +46,7 @@ function App() {
             <Timeline/>
             <Project/>
             <Contact/>
+            <ChatbotWidget />
         </FadeIn>
         <Footer />
     </div>
