@@ -5,7 +5,7 @@ import MessageParser from "./MessageParser";
 const config = {
   botName: "AI Assistant",
   initialMessages: [
-    createChatBotMessage("Hi, I am Bagtyyar's Chatbot! Ask me anything about my portfolio or tools I have worked with.", { widget: "welcome" })
+    createChatBotMessage("Hi, I am Botfolio! Ask me anything about his portfolio or tools he has worked with.", { widget: "welcome" })
   ],
   customStyles: {
     botMessageBox: {
