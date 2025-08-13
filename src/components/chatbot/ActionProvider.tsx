@@ -12,7 +12,7 @@ class ActionProvider {
 
   async handleMessage(message: string) {
     // Hugging Face Chat API endpoint and key
-    const API_URL = "https://relaxed-gecko-14aff2.netlify.app/.netlify/functions/hfProxy";
+    const API_URL = "https://peaceful-tanuki-e80ae4.netlify.app/.netlify/functions/huggingface";
     try {
       // Get previous messages from state
       const getPrevMessages = (state: any) => state.messages || [];
