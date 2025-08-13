@@ -12,9 +12,7 @@ class ActionProvider {
 
   async handleMessage(message: string) {
     // Hugging Face Chat API endpoint and key
-    const API_URL = "https://router.huggingface.co/v1/chat/completions";
-    const HF_API_KEY = process.env.REACT_APP_HF_API_KEY;
-
+    const API_URL = "https://relaxed-gecko-14aff2.netlify.app/.netlify/functions/hfProxy";
     try {
       // Get previous messages from state
       const getPrevMessages = (state: any) => state.messages || [];
@@ -60,7 +58,7 @@ class ActionProvider {
           },
           {
             headers: {
-              'Authorization': `Bearer ${HF_API_KEY}`,
+              'Access-Control-Allow-Origin': '*',
               'Content-Type': 'application/json'
             }
           }
