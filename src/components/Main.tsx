@@ -20,7 +20,7 @@ function Main() {
           </div>
           <h1>Hi, I'm Bagtyyar Akyyev</h1>
           <p>Senior Software Engineer
-          <br/>Cyclist 🚴,  Avid Traveler 🌍, Tech Enthusiast 🤖, Former SDET</p>
+          <br/>Avid Traveler 🌍, Tech Enthusiast 🤖, Cyclist 🚴, Former SDET</p>
 
           <div className="mobile_social_icons">
             <a href={url.GIT_URL} target="_blank" rel="noreferrer"><GitHubIcon/></a>
