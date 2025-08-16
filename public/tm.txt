@@ -1,107 +1,64 @@
-Languages/Methodologies: 
-JAVA (main), JavaScript, TypeScript, Python, Gherkin 
-
-Technologies: 
-Java, Spring, RESTful services, Database Management (SQL, NoSQL), Caching, DevOps, CICD pipelines, Splunk, Shell Scripting, Kibana, Jenkins, Docker, K8s, Microsoft Azure, Grafana, Apache Kafka, Redis, Xmatters, Salesforce CRM, Sonarqube,  Jmeter, Jfrog Artifactory, Cypress, Selenium WebDriver, TestNG, JUnit, Cucumber, Appium, Selenium Grid, DOM, Web Services, AWS EC2, S3, HTML, CSS, XML, JSON, XPATH, JDBC, Apache POI, JEST, NodeJS, Gitlab CI
-
-Framework Approaches: Spring (4.x/3.x), Spring MVC, Cucumber Behavior Driven Development (BDD),Test-Driven Testing (TDD), Data-Driven Testing (DDT), Protractor Angular end-to-end testing, Page Object Model (POM) 
-Software Tools and Utilities: IntelliJ, VS-Code, Eclipse, SQL Developer, Postman, Swagger Doc, Android Studio, Xcode, Oracle Developer, Zeplin, Miro, Perfecto
-Database Technologies: Google Cloud Platform (GCP), Azure Table & Blobs, Elasticsearch, Oracle Database, MySQL, Postgres
-
+Languages/Methodologies:
+Java (main), JavaScript, TypeScript, Python, Gherkin
+Technologies:
+Spring, RESTful services, SQL/NoSQL DBs, Caching, DevOps, CICD (Jenkins, GitLab CI), Splunk, Shell Scripting, Kibana, Docker, Kubernetes, Azure, GCP, AWS (EC2, S3), Grafana, Kafka, Redis, Xmatters, Salesforce CRM, Sonarqube, JMeter, JFrog Artifactory, Cypress, Selenium (WebDriver, Grid), TestNG, JUnit, Cucumber, Appium, DOM, Web Services, HTML, CSS, XML, JSON, XPATH, JDBC, Apache POI, Jest, NodeJS
+Frameworks/Approaches:
+Spring (4.x/3.x, MVC), BDD (Cucumber), TDD, DDT, Protractor (Angular e2e), Page Object Model
+Tools/Utilities:
+IntelliJ, VS Code, Eclipse, SQL Developer, Postman, Swagger, Android Studio, Xcode, Oracle Developer, Zeplin, Miro, Perfecto
+Databases:
+GCP, Azure Tables & Blobs, Elasticsearch, Oracle, MySQL, Postgres
 Education
-2018 Master’s program: Computer Science Engineering – University at Buffalo, Buffalo, NY
-2007-2012  Bachelor’s and Master’s degree: Mathematics – Gazi University, Turkey 
+2018: M.S. Computer Science Engineering – University at Buffalo, NY
+2007–2012: B.S. & M.S. Mathematics – Gazi University, Turkey
 
-Certifications 
+Certifications
 Oracle Certified Associate, Java SE Programmer
 
-
 Work History
-
 Walmart Health & Sam’s Club – Software Engineer III
- Oct 2022 – Present
-Lead developer for Personalization – Sam’s Club, designing microservices to synchronize customer preference integrity between legacy and modern systems.
-Built and deployed event-driven services leveraging Kafka, GCP Pub/Sub, Azure Cosmos DB, Cassandra, and GCP BigQuery for scalable, low-latency data processing.
-Developed and maintained RESTful APIs to ensure consistent preference management across multiple platforms.
-Integrated Cucumber Framework with Test Containers, enabling functional automation without reliance on live dependencies.
-Contributed functional scenarios to the Karate Framework, enhancing automated API validation coverage.
-Developed and maintained RESTful API endpoints for healthcare applications, focusing on patient management, electronic health records, scheduling, and provider directory.
-Collaborated with cross-functional teams to understand requirements and implement effective solutions.
-Implemented HIPAA-compliant security measures to safeguard sensitive patient data.
-Integrated microservices with Salesforce for the Wellness My Way project, enhancing data synchronization and system efficiency.
-Optimized database queries and system performance to enhance API responsiveness and scalability.
-Applied advanced Java 11 features, including lambda expressions, multithreading, and sorting mechanisms.
-Developed secure microservices using OAuth 2.0 for app-to-app authentication.
-Performed comprehensive testing (unit, integration, performance, end-to-end) to ensure API reliability and accuracy.
-Integrated Google Cloud Platform and Elasticsearch to manage healthcare resources and enhance API performance.
-Developed and optimized MySQL stored procedures and integrated with Azure tables and blobs for real-time eligibility APIs.
-Built robust APIs for seamless data flow across departments and services.
-Utilized Splunk logs for debugging, troubleshooting, and system monitoring.
-Provided production support using Xmatter, ensuring system stability and user satisfaction.
-Developed microservices with Spring Boot, cron jobs, caching solutions, and multithreading for improved performance and scalability.
-Integrated Multi-Factor Authentication (MFA) using custom-built libraries for enhanced security.
-Developed and administered coding challenges and technical tests for candidate assessment.
-Led unit and integration testing efforts to ensure application quality.
-Ensured smooth functioning of critical healthcare systems and resolved issues promptly to minimize business impact.
+Oct 2022 – Present
+Lead dev for Personalization (Sam’s Club); designed microservices syncing preferences between legacy & modern systems.
+Built event-driven services with Kafka, GCP Pub/Sub, Azure Cosmos DB, Cassandra, BigQuery.
+Developed/maintained REST APIs for customer preference & healthcare apps (patient management, EHR, scheduling, provider directory).
+Integrated Cucumber with Test Containers, contributed Karate API scenarios.
+Applied HIPAA-compliant security & OAuth 2.0.
+Integrated Salesforce (Wellness My Way).
+Optimized queries & APIs (MySQL, Azure Tables/Blobs).
+Leveraged GCP + Elasticsearch for resource management.
+Built Spring Boot microservices (cron jobs, caching, multithreading, MFA).
+Extensive testing (unit, integration, performance, e2e).
+Used Splunk for monitoring; Xmatters for support.
+Developed coding challenges for hiring.
+Ensured stability & scalability of healthcare systems.
 
-TekSystems - Senior Quality Engineer
-Client: Walmart, Dec 2021–Oct 2022
-Developed a comprehensive Integration Automation Test Suite using JUnit 5, Rest Assured, and HL7 libraries in a Maven environment.
-Achieved a 95% increase in integration test code coverage, significantly enhancing test reliability and system robustness.
-Integrated the test suite with Walmart's CICD pipeline for automatic test execution and Slack reporting.
-Enhanced test reporting with Extent Reporting library for visually appealing, insightful execution reports.
-Managed Test Cases and Scenarios in Jira, aligning with SDLC requirements.
-Conducted thorough application testing with datasets from Excel Workbooks and CSV files.
-Streamlined patient data management with automation code snippets, improving data creation and discrepancy identification.
-Collaborated with Business Analysts to analyze User Stories and define acceptance criteria.
-Executed manual and automated API testing with Postman and REST Web Services in Java.
-Facilitated new feature delivery to Walmart Health API services by providing test data and unit tests.
-Utilized Jira for bug tracking and reporting, assisting UI teams in web browser functionality testing.
-Contributed to Unit, Integration, and E2E testing frameworks for comprehensive coverage.
-Performed performance testing with JMeter, resolving bottlenecks with service owners.
-Improved Splunk Dashboard queries for accurate information display.
-Ensured code quality through proactive involvement and guidance during early SDLC stages.
-Maintained Data-Driven Development framework with JUnit 5 parameterized tests, reading CSV files.
-Wrote high-quality, object-oriented testing code adhering to industry standards.
-Managed GIT and GitHub for version control, overseeing installation and administration.
-Spearheaded performance tuning and debugging during testing and deployment.
-Cultivated a quality-oriented mindset with a "Test to Break" attitude in collaborative environments.
-Participated in Agile ceremonies: Daily Scrums, Sprint Grooming, Planning, Demos, and Retrospectives.
-Leveraged concord tool for efficient job management within the CICD pipeline.
+TekSystems – Senior Quality Engineer (Client: Walmart)
+Dec 2021 – Oct 2022
+Built Integration Automation Suite with JUnit 5, Rest Assured, HL7; increased test coverage 95%.
+Integrated with CICD + Slack; enhanced reports with Extent Reporting.
+Managed Jira test cases; created datasets from Excel/CSV.
+Automated & manual API testing (Postman, Java REST).
+Supported new Walmart Health APIs with data & unit tests.
+Performance testing (JMeter), improved Splunk dashboards.
+Ensured code quality, guided early SDLC.
+Maintained DDT with JUnit 5 parameterized tests.
+Managed Git/GitHub; tuned/debugged deployments.
+Agile participation (Scrum, Grooming, Planning, Demos, Retros).
 
+Mindera Software Craft – Sr. QA Engineer (Client: Amwell)
+Oct 2020 – Dec 2021
+Applied POM design; automated >90% test coverage (Cypress).
+Manual & automated tests (Java Rest Assured, Cypress, Jest, Postman).
+Functional, API, e2e, Regression, Sanity testing.
+AWS: CloudWatch, DynamoDB, API Gateway, EC2, S3.
+Used Git/Bitbucket/GitLab; Jira defect tracking.
+Wrote NodeJS, Angular quick fixes; tested WebSockets.
+Contributed to contract testing & CI/CD automation.
+Parallel execution with Sorry Cypress; mobile testing (iOS/Android).
 
-Mindera Software Craft - Sn. Quality Assurance Engineer
-Client: Amwell Oct 2020–Dec 2021 
-Applied Page Object Model design pattern to enhance testing framework readability, reusability, and maintainability.
-Performed manual and automated testing for multiple microservice projects.
-Created, fixed, and modified API tests with Rest Assured Java, ensuring comprehensive coverage.
-Analyzed use cases and specifications to develop detailed Test Cases.
-Automated tests using Cypress, achieving over 90% test coverage.
-Implemented Unit and Integration Tests with Nest Framework.
-Conducted e2e, API, Functional, Sanity, and Regression testing.
-Developed and automated Test Scripts using JavaScript and Cypress, following Page Object Model.
-Utilized AWS services: CloudWatch, DynamoDB, API Gateway, EC2, S3.
-Executed manual and automated API testing with Postman, Cypress, JEST, and REST Assured.
-Logged defects using Jira and managed test cycles.
-Gained experience with Git, Bitbucket, and GitLab for version control.
-Participated in Agile ceremonies: Daily Scrums, Sprint Planning, Sprint Demos, and Retrospectives.
-Learned NodeJS setup, creating custom commands, and Angular for quick fixes.
-Tested WebSocket and API service calls, aiding developers in bug identification.
-Provided continuous feedback and advice to improve code quality early in SDLC.
-Contributed to contract testing to prevent microservice failures.
-Created GitLab-CI/CD pipeline jobs for automation testing.
-Implemented Sorry Cypress for parallel test execution and improved reporting.
-Refactored automation scripts for readability and maintainability.
-Performed mobile testing for iOS and Android devices.
-
-BuffSci - Robotics and Coding Instructor
-Sep 2017–May 2020
-Guided students through robot design, construction, and programming for various challenges.
-Supervised robotics competitions, enabling students to showcase skills at FRC and FTC.
-Facilitated hands-on learning with platforms like VEX Robotics and Arduino.
-Mentored students in Java, Scratch, and Blockly, enhancing computational thinking and problem-solving.
-Created interactive, collaborative learning environments to foster teamwork and creativity.
-Provided individualized support to ensure student mastery of concepts.
-Collaborated with educators and parents to promote STEM education's importance.
-Pursued continuous professional development in robotics and coding education.
-
+BuffSci – Robotics & Coding Instructor
+Sep 2017 – May 2020
+Taught robotics (VEX, Arduino), programming (Java, Scratch, Blockly).
+Supervised FRC/FTC competitions.
+Fostered teamwork, problem-solving, creativity.
+Collaborated with parents/teachers to promote STEM.
