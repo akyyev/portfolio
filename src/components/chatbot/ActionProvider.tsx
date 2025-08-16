@@ -49,7 +49,8 @@ class ActionProvider {
         this.API_URL,
         {
           messages,
-          model: "deepseek-ai/DeepSeek-V3-0324:fireworks-ai",
+          // model: "deepseek-ai/DeepSeek-V3-0324:fireworks-ai",
+          model: "openai/gpt-oss-20b",
           tools: [],
           stream: false,
         },
