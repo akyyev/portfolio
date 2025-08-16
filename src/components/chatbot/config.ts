@@ -1,11 +1,9 @@
 import { createChatBotMessage } from "react-chatbot-kit";
-import ActionProvider from "./ActionProvider";
-import MessageParser from "./MessageParser";
 
 const config = {
   botName: "AI Assistant",
   initialMessages: [
-    createChatBotMessage("Hi, I am Botfolio! Ask me anything about his portfolio or tools he has worked with.", { widget: "welcome" })
+    createChatBotMessage("Hello! I'm Botfolio. Interested in exploring his portfolio? Ask me anything!", { widget: "welcome" })
   ],
   customStyles: {
     botMessageBox: {
