@@ -15,7 +15,7 @@ const ChatbotWidget: React.FC = () => {
     const timer = setTimeout(() => {
       setShowIcon(true);
       playNotificationSound();
-    }, 2000);
+    }, 4000);
 
     return () => clearTimeout(timer);
   }, []);
@@ -92,8 +92,8 @@ const styles = {
     width: "95%"
   },
   iconButton: {
-    width: 70,
-    height: 70,
+    width: 100,
+    // height: 70,
     background: "none",
     border: "none",
     cursor: "pointer",
