@@ -4,7 +4,7 @@ import "react-chatbot-kit/build/main.css";
 import config from "./chatbot/config";
 import MessageParser from "./chatbot/MessageParser";
 import ActionProvider from "./chatbot/ActionProvider";
-import chatbotIcon from "../assets/images/chat.svg"; 
+import chatbotIcon from "../assets/images/chat2.png"; 
 import notificationSound from "../assets/sounds/notification.mp3";
 
 const ChatbotWidget: React.FC = () => {
@@ -92,12 +92,12 @@ const styles = {
     width: "95%"
   },
   iconButton: {
-    width: 100,
-    // height: 70,
+    width: 70,
+    height: 70,
     background: "none",
     border: "none",
     cursor: "pointer",
-    padding: 0,
+    padding: 10,
   },
   iconImage: {
     width: "150%",
