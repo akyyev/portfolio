@@ -54,18 +54,16 @@ class ActionProvider {
   /** Append a message from the bot to the state */
   private appendBotMessage(content: string) {
     this.setState((prev) => ({
-      ...prev,
       messages: [...prev.messages, this.createChatBotMessage(content)],
     }));
   }
 
   /** Main handler for processing user input */
-  public async handleMessage(userInput: string) {
+  public async handleMessage() {
     try {
       const prevMessages = await this.getPreviousMessages();
       const formattedMessages: ChatMessage[] = [
         ...this.formatHistory(prevMessages),
-        { role: "user", content: userInput },
       ];
 
       const botReply = await this.sendToAPI(formattedMessages);
