@@ -8,12 +8,6 @@ interface ChatMessage {
 interface ChatState {
   messages: any[];
 }
-
-let tmContent = "";
-
-fetch('/portfolio/tm.txt')
-  .then(r => r.text())
-  .then(text => tmContent = text);
   
 class ActionProvider {
   private readonly API_URL = process.env.REACT_APP_API_URL as string;
@@ -39,29 +33,21 @@ class ActionProvider {
     }));
   }
 
-  private sanitizeContent(content: string): string {
-    return content
-      .replace(/<br\s*\/?>/gi, '\n') 
-      .replace(/<[^>]+>/g, '');
-  }
-
   private async sendToAPI(messages: ChatMessage[]): Promise<string> {
     try {
       const response = await axios.post(
         this.API_URL,
         {
           messages,
-          tools: [],
-          stream: false,
         },
         { headers: { "Content-Type": "application/json" } }
       );
 
-      return this.sanitizeContent(response.data?.choices?.[0]?.message?.content) ?? 
-             "Hmm… looks like I’m having some issues. Let’s give it another shot!";
+      return response.data.reply;
+
     } catch (error) {
       console.error("API request failed:", error);
-      return "Error: Unable to process your request.";
+      return "Hmm… looks like I’m having some issues.";
     }
   }
 
@@ -78,10 +64,6 @@ class ActionProvider {
     try {
       const prevMessages = await this.getPreviousMessages();
       const formattedMessages: ChatMessage[] = [
-        {
-          role: "system",
-          content: `You (Botfolio) are a helpful assistant that provides information about Bagtyyar's portfolio, and his expertise: ${tmContent}.`,
-        },
         ...this.formatHistory(prevMessages),
         { role: "user", content: userInput },
       ];
