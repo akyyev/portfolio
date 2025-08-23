@@ -77,7 +77,10 @@ const ChatbotWidget: React.FC = () => {
       {showIcon && (
         <>
           <button
-            style={styles.iconButton}
+            style={{
+                ...styles.iconButton,
+                display: isOpen ? "none" : "block",
+            }}
             aria-label="Toggle chatbot"
             onClick={toggleChatbot}
           >
