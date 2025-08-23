@@ -4,7 +4,7 @@ import "react-chatbot-kit/build/main.css";
 import config from "./chatbot/config";
 import MessageParser from "./chatbot/MessageParser";
 import ActionProvider from "./chatbot/ActionProvider";
-import chatbotIcon from "../assets/images/chat.svg";
+import chatbotIcon from "../assets/images/chat2.png";
 import notificationSound from "../assets/sounds/notification.mp3";
 
 const ChatbotWidget: React.FC = () => {
