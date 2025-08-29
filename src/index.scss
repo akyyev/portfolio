@@ -33,6 +33,10 @@ p, a, h1, h2, h3, h4, h5, label, button {
   font-family: "Lato", sans-serif;
 }
 
+.markdown-message > p {
+  color: #464646;
+}
+
 .navigation-bar {
   justify-content: space-between;
   background-color:  #1d2c39;
