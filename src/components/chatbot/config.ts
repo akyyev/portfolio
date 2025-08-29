@@ -4,9 +4,7 @@ import CustomAvatar from './CustomAvatar';
 const config = {
   botName: "AI Assistant",
   initialMessages: [
-    createChatBotMessage("Hello! I'm Botfolio. Interested in exploring his portfolio? Ask me anything!", {
-      widget: "welcome"
-    })
+    createChatBotMessage("Hello! I'm Botfolio. Interested in exploring his portfolio? Ask me anything!", {})
   ],
   customStyles: {
     botMessageBox: {
@@ -17,9 +15,8 @@ const config = {
     },
   },
   customComponents: {
-  botAvatar: CustomAvatar
-}
-
+    botAvatar: CustomAvatar,
+  }
 };
 
 export default config;

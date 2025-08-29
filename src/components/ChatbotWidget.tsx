@@ -4,7 +4,7 @@ import "react-chatbot-kit/build/main.css";
 import config from "./chatbot/config";
 import MessageParser from "./chatbot/MessageParser";
 import ActionProvider from "./chatbot/ActionProvider";
-import chatbotIcon from "../assets/images/chat2.png";
+import chatbotIcon from "../assets/images/image.png";
 import notificationSound from "../assets/sounds/notification.mp3";
 
 const ChatbotWidget: React.FC = () => {
@@ -33,7 +33,7 @@ const ChatbotWidget: React.FC = () => {
     const timer = setTimeout(() => {
       setShowIcon(true);
       playNotificationSound();
-    }, 4000);
+    }, 3000);
 
     return () => clearTimeout(timer);
   }, []);
@@ -125,16 +125,16 @@ const styles = {
     overflow: "hidden" as const,
   },
   iconButton: {
-    width: 70,
-    height: 70,
+    width: 120,
+    height: 120,
     background: "none",
     border: "none",
     cursor: "pointer",
-    padding: 10,
+    padding: 30,
   },
   iconImage: {
-    width: "150%",
-    height: "150%",
+    width: "200%",
+    height: "200%",
   },
 };
 
