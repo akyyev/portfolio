@@ -4,13 +4,31 @@ import { marked } from "marked";
 
 marked.setOptions({ breaks: true });
 
-const styles = {
-  container: {
+const Spinner = () => (
+  <>
+    <style>
+      {`
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `}
+    </style>
+    <div style={spinnerWrapperStyle}>
+      <div style={spinnerStyle}></div>
+    </div>
+  </>
+);
+
+const MarkdownMessage = ({ message, type, loader }) => {
+  const isLoading = loader?._owner?.return?.memoizedProps?.props?.loading;
+
+  const containerStyle = {
     fontFamily: "Arial, sans-serif",
     fontSize: "14px",
     lineHeight: "1.4",
-    color: "#333",
-    backgroundColor: "#f9f9f9",
+    color: "#131313ff",
+    backgroundColor: type === "robot" ? "#e1e9faff" : "#f9f9f9",
     padding: "8px",
     borderRadius: "12px",
     margin: "4px 0",
@@ -22,51 +40,37 @@ const styles = {
     overflowX: "auto",
     alignSelf: "flex-start",
     position: "relative",
-  },
-  spinnerWrapper: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    height: "40px",
-  },
-  spinner: {
-    width: "24px",
-    height: "24px",
-    border: "4px solid #ccc",
-    borderTop: "4px solid #333",
-    borderRadius: "50%",
-    animation: "spin 1s linear infinite",
-    margin: "auto",
-  },
-};
-
-const MarkdownMessage = ({ message, loader }) => {
-  const isLoading =
-    loader?._owner?.return?.memoizedProps?.props?.loading ?? true;
+  };
 
   return (
-    <div style={styles.container} className="markdown-message">
-      <style>
-        {`
-          @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-          }
-        `}
-      </style>
-      {isLoading ? (
-        <div style={styles.spinnerWrapper}>
-          <div style={styles.spinner}></div>
-        </div>
-      ) : (
+    <div style={containerStyle} className="markdown-message">
+      {isLoading ? <Spinner /> : (
         <div dangerouslySetInnerHTML={{ __html: marked(message) }} />
       )}
     </div>
   );
 };
 
+const spinnerWrapperStyle = {
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  height: "40px",
+};
+
+const spinnerStyle = {
+  width: "24px",
+  height: "24px",
+  border: "4px solid #ccc",
+  borderTop: "4px solid #333",
+  borderRadius: "50%",
+  animation: "spin 1s linear infinite",
+  margin: "auto",
+};
+
 MarkdownMessage.propTypes = {
   message: PropTypes.string.isRequired,
+  type: PropTypes.string,
   loader: PropTypes.object,
 };
 

@@ -133,8 +133,8 @@ const styles = {
     padding: 30,
   },
   iconImage: {
-    width: "200%",
-    height: "200%",
+    width: "180%",
+    height: "180%",
   },
 };
 

@@ -1,5 +1,5 @@
 import { createChatBotMessage } from "react-chatbot-kit";
-import CustomAvatar from "./CustomAvatar";
+import {CustomBotAvatar, CustomUserAvatar} from "./CustomAvatar";
 import MarkdownMessage from "./CustomMarkDown";
 
 const config = {
@@ -19,9 +19,11 @@ const config = {
     },
   },
   customComponents: {
-    botAvatar: CustomAvatar,
+    botAvatar: CustomBotAvatar,
+    userAvatar: CustomUserAvatar,
     // if needed comment line below to use default configuration
-    botChatMessage: MarkdownMessage,
+    botChatMessage: (props: any) => <MarkdownMessage {...props} type="robot"/>,
+    userChatMessage: (props: any) => <MarkdownMessage {...props} type="user"/>,
   },
 };
 

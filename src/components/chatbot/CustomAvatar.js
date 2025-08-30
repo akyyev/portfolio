@@ -1,6 +1,7 @@
-import chatbotIcon from "./avatar.png";
+import chatbotIcon from "./robotAvatar.png";
+import userAvatar from "./userAvatar2.png";
 
-const CustomAvatar = () => {
+const CustomBotAvatar = () => {
   return (
     <div className="custom-avatar">
       <img src={chatbotIcon} alt="Bot Avatar" style={{ width: 40 }} />
@@ -8,4 +9,13 @@ const CustomAvatar = () => {
   );
 };
 
-export default CustomAvatar;
+const CustomUserAvatar = () => {
+  return (
+    <div className="custom-avatar">
+      <img src={userAvatar} alt="User Avatar" style={{ width: 40 }} />
+    </div>
+  );
+};
+
+// Export as named components
+export { CustomBotAvatar, CustomUserAvatar };
