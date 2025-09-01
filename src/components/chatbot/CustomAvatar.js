@@ -1,5 +1,5 @@
 import chatbotIcon from "./robotAvatar.png";
-import userAvatar from "./userAvatar2.png";
+import userAvatar from "./userAvatar.png";
 
 const CustomBotAvatar = () => {
   return (
