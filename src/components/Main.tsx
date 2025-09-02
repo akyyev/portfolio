@@ -18,9 +18,9 @@ function Main() {
             <a href={url.GIT_URL} target="_blank" rel="noreferrer"><GitHubIcon/></a>
             <a href={url.LINKEDIN_URL} target="_blank" rel="noreferrer"><LinkedInIcon/></a>
           </div>
-          <h1>Hi, I'm Bagtyyar A.</h1>
-          <p>Senior Software Engineer
-          <br/>Avid Traveler 🌍, Tech Enthusiast 🤖, Cyclist 🚴, SDET 💻</p>
+          <h1>Hi, I'm Bagtyyar.</h1>
+          <p>Software Development Engineer
+          <br/>Avid Traveler 🌍, Tech Enthusiast 🤖, Cyclist 🚴, Former SDET 💻</p>
 
           <div className="mobile_social_icons">
             <a href={url.GIT_URL} target="_blank" rel="noreferrer"><GitHubIcon/></a>

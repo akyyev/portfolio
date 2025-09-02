@@ -55,7 +55,7 @@ class ActionProvider {
   /** Send formatted messages to the API and return the bot's reply */
   private async sendToAPI(messages: ChatMessage[]): Promise<string> {
     try {
-      const response = await this.axiosInstance.post("/", { messages });
+      const response = await this.axiosInstance.post("/", { messages, timezone: Intl.DateTimeFormat().resolvedOptions().timeZone });
       return response.data.reply;
     } catch (error: any) {
       console.error("API request failed:", error?.message || error);
