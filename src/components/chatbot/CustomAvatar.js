@@ -12,7 +12,7 @@ const CustomBotAvatar = () => {
 const CustomUserAvatar = () => {
   return (
     <div className="custom-avatar">
-      <img src={userAvatar} alt="User Avatar" style={{ width: 40 }} />
+      <img src={userAvatar} alt="User Avatar" style={{ width: 35 }} />
     </div>
   );
 };
