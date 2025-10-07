@@ -107,10 +107,9 @@ const ChatbotWidget: React.FC = () => {
 
           {showForm && !userInfo && (
             <form style={styles.form} onSubmit={handleFormSubmit}>
-              <h4>Start Chat</h4>
               <input
                 type="text"
-                placeholder="Your Name"
+                placeholder="What's your name?"
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
                 required
@@ -118,7 +117,7 @@ const ChatbotWidget: React.FC = () => {
               />
               <input
                 type="email"
-                placeholder="Your Email"
+                placeholder="you@example.com"
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
                 required
@@ -161,7 +160,7 @@ const styles = {
   form: {
     background: "#fff",
     padding: 16,
-    borderRadius: 3,
+    borderRadius: 10,
     boxShadow: "0 2px 16px rgba(0,0,0,0.2)",
     display: "flex",
     flexDirection: "column" as const,
@@ -170,17 +169,17 @@ const styles = {
   },
   input: {
     padding: 8,
-    borderRadius: 4,
+    borderRadius: 10,
     border: "1px solid #ccc",
-    fontSize: 16,
+    fontSize: 14,
   },
   startButton: {
     background: "#1976d2",
     color: "#fff",
     border: "none",
-    borderRadius: 4,
+    borderRadius: 10,
     padding: "10px 0",
-    fontSize: 16,
+    fontSize: 14,
     cursor: "pointer",
   },
   container: {
