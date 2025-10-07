@@ -6,6 +6,7 @@ import MessageParser from "./chatbot/MessageParser";
 import ActionProvider from "./chatbot/ActionProvider";
 import chatbotIcon from "../assets/images/image.png";
 import notificationSound from "../assets/sounds/notification.mp3";
+import { createChatBotMessage } from "react-chatbot-kit";
 
 const ChatbotWidget: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -14,6 +15,19 @@ const ChatbotWidget: React.FC = () => {
   const chatbotRef = useRef<HTMLDivElement>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const isMountedRef = useRef(true);
+  const [userInfo, setUserInfo] = useState<{ name: string; email: string } | null>(null);
+  const [form, setForm] = useState({ name: "", email: "" });
+  const [showForm, setShowForm] = useState(false);
+
+  // Form submit handler
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (form.name.trim() && form.email.trim()) {
+      setUserInfo({ name: form.name, email: form.email });
+      setShowForm(false);
+      setIsOpen(true);
+    }
+  };
 
   // Track mount state
   useEffect(() => {
@@ -63,7 +77,11 @@ const ChatbotWidget: React.FC = () => {
   };
 
   const toggleChatbot = () => {
-    setIsOpen((prev) => !prev);
+    if (!userInfo) {
+      setShowForm(true); // Show form if userInfo not set
+    } else {
+      setIsOpen((prev) => !prev);
+    }
   };
 
   const handleSaveMessages = (newMessages: any[]) => {
@@ -78,8 +96,8 @@ const ChatbotWidget: React.FC = () => {
         <>
           <button
             style={{
-                ...styles.iconButton,
-                display: isOpen ? "none" : "block",
+              ...styles.iconButton,
+              display: isOpen || showForm ? "none" : "block",
             }}
             aria-label="Toggle chatbot"
             onClick={toggleChatbot}
@@ -87,24 +105,52 @@ const ChatbotWidget: React.FC = () => {
             <img src={chatbotIcon} alt="Chatbot Icon" style={styles.iconImage} />
           </button>
 
-          <div
-            style={{
-              ...styles.chatbotContainer,
-              display: isOpen ? "block" : "none",
-            }}
-            ref={chatbotRef}
-          >
-            <Chatbot
-              config={{
-                ...config,
-                initialMessages: messages.length ? messages : config.initialMessages,
+          {showForm && !userInfo && (
+            <form style={styles.form} onSubmit={handleFormSubmit}>
+              <h4>Start Chat</h4>
+              <input
+                type="text"
+                placeholder="Your Name"
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                required
+                style={styles.input}
+              />
+              <input
+                type="email"
+                placeholder="Your Email"
+                value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+                required
+                style={styles.input}
+              />
+              <button type="submit" style={styles.startButton}>Start Chat</button>
+            </form>
+          )}
+
+          {userInfo && (
+            <div
+              style={{
+                ...styles.chatbotContainer,
+                display: isOpen ? "block" : "none",
               }}
-              messageParser={MessageParser}
-              actionProvider={ActionProvider}
-              validator={(str) => str.trim().length !== 0}
-              saveMessages={handleSaveMessages}
-            />
-          </div>
+              ref={chatbotRef}
+            >
+              <Chatbot
+                config={{
+                  ...config,
+                  initialMessages: messages.length ? messages : [
+                    createChatBotMessage(`Hey ${userInfo.name}! Thanks for sharing your email — ${userInfo.email}. <br>
+                      I’m Botfolio, here to help with Bagtyyar’s portfolio — ask me anything!`, {})
+                  ],
+                }}
+                messageParser={MessageParser}
+                actionProvider={ActionProvider}
+                validator={(str) => str.trim().length !== 0}
+                saveMessages={handleSaveMessages}
+              />
+            </div>
+          )}
         </>
       )}
     </div>
@@ -112,6 +158,31 @@ const ChatbotWidget: React.FC = () => {
 };
 
 const styles = {
+  form: {
+    background: "#fff",
+    padding: 16,
+    borderRadius: 3,
+    boxShadow: "0 2px 16px rgba(0,0,0,0.2)",
+    display: "flex",
+    flexDirection: "column" as const,
+    gap: 4,
+    minWidth: 80,
+  },
+  input: {
+    padding: 8,
+    borderRadius: 4,
+    border: "1px solid #ccc",
+    fontSize: 16,
+  },
+  startButton: {
+    background: "#1976d2",
+    color: "#fff",
+    border: "none",
+    borderRadius: 4,
+    padding: "10px 0",
+    fontSize: 16,
+    cursor: "pointer",
+  },
   container: {
     position: "fixed" as const,
     bottom: 24,

@@ -25,7 +25,7 @@ class ActionProvider {
     if (!process.env.REACT_APP_API_URL) {
       throw new Error("Missing REACT_APP_API_URL in environment variables.");
     }
-
+    
     this.API_URL = process.env.REACT_APP_API_URL;
     this.axiosInstance = axios.create({
       baseURL: this.API_URL,
@@ -55,7 +55,8 @@ class ActionProvider {
   /** Send formatted messages to the API and return the bot's reply */
   private async sendToAPI(messages: ChatMessage[]): Promise<string> {
     try {
-      const response = await this.axiosInstance.post("/", { messages, timezone: Intl.DateTimeFormat().resolvedOptions().timeZone });
+      const payload: any = { messages, timezone: Intl.DateTimeFormat().resolvedOptions().timeZone };
+      const response = await this.axiosInstance.post("/", payload);
       return response.data.reply;
     } catch (error: any) {
       console.error("API request failed:", error?.message || error);
