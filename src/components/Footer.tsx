@@ -8,8 +8,8 @@ function Footer() {
   return (
     <footer>
       <div>
-        <a href={url.GIT_URL} target="_blank" rel="noreferrer"><GitHubIcon/></a>
-        <a href={url.LINKEDIN_URL} target="_blank" rel="noreferrer"><LinkedInIcon/></a>
+        <a href={url.GIT_URL} target="_blank" rel="noreferrer" aria-label="GitHub Profile"><GitHubIcon/></a>
+        <a href={url.LINKEDIN_URL} target="_blank" rel="noreferrer" aria-label="LinkedIn Profile"><LinkedInIcon/></a>
       </div>
       <p>&copy; <span id="year">{new Date().getFullYear()} </span>Bagtyyar. All rights reserved</p>
 

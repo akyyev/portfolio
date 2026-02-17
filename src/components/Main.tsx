@@ -15,16 +15,16 @@ function Main() {
         </div>
         <div className="content">
           <div className="social_icons">
-            <a href={url.GIT_URL} target="_blank" rel="noreferrer"><GitHubIcon/></a>
-            <a href={url.LINKEDIN_URL} target="_blank" rel="noreferrer"><LinkedInIcon/></a>
+            <a href={url.GIT_URL} target="_blank" rel="noreferrer" aria-label="GitHub Profile"><GitHubIcon/></a>
+            <a href={url.LINKEDIN_URL} target="_blank" rel="noreferrer" aria-label="LinkedIn Profile"><LinkedInIcon/></a>
           </div>
           <h1>Hi, I'm Bagtyyar.</h1>
           <p>Software Development Engineer
           <br/>Avid Traveler 🌍, Tech Enthusiast 🤖, Cyclist 🚴, Former SDET 💻</p>
 
           <div className="mobile_social_icons">
-            <a href={url.GIT_URL} target="_blank" rel="noreferrer"><GitHubIcon/></a>
-            <a href={url.LINKEDIN_URL} target="_blank" rel="noreferrer"><LinkedInIcon/></a>
+            <a href={url.GIT_URL} target="_blank" rel="noreferrer" aria-label="GitHub Profile"><GitHubIcon/></a>
+            <a href={url.LINKEDIN_URL} target="_blank" rel="noreferrer" aria-label="LinkedIn Profile"><LinkedInIcon/></a>
           </div>
         </div>
       </div>

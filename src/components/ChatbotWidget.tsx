@@ -1,20 +1,24 @@
 import React, { useState, useEffect, useRef } from "react";
 import Chatbot from "react-chatbot-kit";
 import "react-chatbot-kit/build/main.css";
+import type { IMessage } from "react-chatbot-kit/build/src/interfaces/IMessages";
 import config from "./chatbot/config";
-import MessageParser from "./chatbot/MessageParser";
+import MessageParser from "./chatbot/MessageParser";  // .tsx
 import ActionProvider from "./chatbot/ActionProvider";
+import "../assets/styles/ChatbotWidget.scss";
 import chatbotIcon from "../assets/images/image.png";
 import notificationSound from "../assets/sounds/notification.mp3";
+
 import { createChatBotMessage } from "react-chatbot-kit";
 
 const ChatbotWidget: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [showIcon, setShowIcon] = useState(false);
-  const [messages, setMessages] = useState<any[]>([]);
+  const [messages, setMessages] = useState<IMessage[]>([]);
   const chatbotRef = useRef<HTMLDivElement>(null);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+
   const isMountedRef = useRef(true);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const [userInfo, setUserInfo] = useState<{ name: string; email: string } | null>(null);
   const [form, setForm] = useState({ name: "", email: "" });
   const [showForm, setShowForm] = useState(false);
@@ -37,16 +41,19 @@ const ChatbotWidget: React.FC = () => {
     };
   }, []);
 
-  // Load notification sound
+
+  // Preload notification sound
   useEffect(() => {
     audioRef.current = new Audio(notificationSound);
   }, []);
 
-  // Show icon after delay
+  // Show icon after delay and play notification sound
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowIcon(true);
-      playNotificationSound();
+      audioRef.current?.play().catch(() => {
+        // Browser blocked autoplay — that's fine, sound is optional
+      });
     }, 3000);
 
     return () => clearTimeout(timer);
@@ -68,14 +75,6 @@ const ChatbotWidget: React.FC = () => {
     };
   }, [isOpen]);
 
-  const playNotificationSound = () => {
-    if (audioRef.current) {
-      audioRef.current.play().catch((error) => {
-        console.log("Audio play was prevented:", error);
-      });
-    }
-  };
-
   const toggleChatbot = () => {
     if (!userInfo) {
       setShowForm(true); // Show form if userInfo not set
@@ -84,53 +83,55 @@ const ChatbotWidget: React.FC = () => {
     }
   };
 
-  const handleSaveMessages = (newMessages: any[]) => {
+  const handleSaveMessages = (newMessages: IMessage[]) => {
     if (isMountedRef.current) {
       setMessages(newMessages);
     }
   };
 
   return (
-    <div style={styles.container}>
+    <div className="chatbot-widget-container">
       {showIcon && (
         <>
           <button
+            className="chatbot-icon-button"
             style={{
-              ...styles.iconButton,
               display: isOpen || showForm ? "none" : "block",
             }}
             aria-label="Toggle chatbot"
             onClick={toggleChatbot}
           >
-            <img src={chatbotIcon} alt="Chatbot Icon" style={styles.iconImage} />
+            <img src={chatbotIcon} alt="Chatbot Icon" />
           </button>
 
           {showForm && !userInfo && (
-            <form style={styles.form} onSubmit={handleFormSubmit}>
+            <form className="chatbot-form" onSubmit={handleFormSubmit}>
+              <label htmlFor="chatbot-name" className="sr-only">Your name</label>
               <input
+                id="chatbot-name"
                 type="text"
                 placeholder="What's your name?"
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
                 required
-                style={styles.input}
               />
+              <label htmlFor="chatbot-email" className="sr-only">Your email</label>
               <input
+                id="chatbot-email"
                 type="email"
                 placeholder="you@example.com"
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
                 required
-                style={styles.input}
               />
-              <button type="submit" style={styles.startButton}>Start Chat</button>
+              <button type="submit" className="chatbot-form-submit">Start Chat</button>
             </form>
           )}
 
           {userInfo && (
             <div
+              className="chatbot-window"
               style={{
-                ...styles.chatbotContainer,
                 display: isOpen ? "block" : "none",
               }}
               ref={chatbotRef}
@@ -154,58 +155,6 @@ const ChatbotWidget: React.FC = () => {
       )}
     </div>
   );
-};
-
-const styles = {
-  form: {
-    background: "#fff",
-    padding: 16,
-    borderRadius: 10,
-    boxShadow: "0 2px 16px rgba(0,0,0,0.2)",
-    display: "flex",
-    flexDirection: "column" as const,
-    gap: 4,
-    minWidth: 80,
-  },
-  input: {
-    padding: 8,
-    borderRadius: 10,
-    border: "1px solid #ccc",
-    fontSize: 14,
-  },
-  startButton: {
-    background: "#1976d2",
-    color: "#fff",
-    border: "none",
-    borderRadius: 10,
-    padding: "10px 0",
-    fontSize: 14,
-    cursor: "pointer",
-  },
-  container: {
-    position: "fixed" as const,
-    bottom: 24,
-    right: 24,
-    zIndex: 9999,
-  },
-  chatbotContainer: {
-    boxShadow: "0 2px 16px rgba(0,0,0,0.2)",
-    borderRadius: 8,
-    background: "#fff",
-    overflow: "hidden" as const,
-  },
-  iconButton: {
-    width: 120,
-    height: 120,
-    background: "none",
-    border: "none",
-    cursor: "pointer",
-    padding: 30,
-  },
-  iconImage: {
-    width: "180%",
-    height: "180%",
-  },
 };
 
 export default ChatbotWidget;

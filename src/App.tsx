@@ -1,4 +1,5 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import {
   Main,
   Timeline,
@@ -8,49 +9,62 @@ import {
   Navigation,
   Footer,
 } from "./components";
-import FadeIn from './components/FadeIn';
-import './index.scss';
+import FadeIn from "./components/FadeIn";
+import BlogList from "./components/blog/BlogList";
+import BlogPost from "./components/blog/BlogPost";
+import ErrorBoundary from "./components/ErrorBoundary";
+import ChatbotWidget from "./components/ChatbotWidget";
+import "./index.scss";
 import { getItemWithTTL, setItemWithTTL } from "./utils/theme";
-import ChatbotWidget from './components/ChatbotWidget';
 
 function App() {
-    // Determine the default theme based on time
-    const hour = new Date().getHours();
-    const defaultTheme = hour >= 6 && hour < 18 ? 'light' : 'dark';
+  const hour = new Date().getHours();
+  const defaultTheme = hour >= 6 && hour < 18 ? "light" : "dark";
+  const selectedTheme = getItemWithTTL("selected-theme") || defaultTheme;
 
-    // Get the selected theme from local storage or use the default theme
-    const selectedTheme = getItemWithTTL("selected-theme") || defaultTheme;
+  const [mode, setMode] = useState<string>(selectedTheme);
 
-    const [mode, setMode] = useState<string>(selectedTheme);
+  const handleModeChange = () => {
+    const next = mode === "dark" ? "light" : "dark";
+    setMode(next);
+    setItemWithTTL("selected-theme", next, 24 * 60 * 60 * 1000);
+  };
 
-    const handleModeChange = () => {
-        if (mode === 'dark') {
-            setMode('light');
-            setItemWithTTL('selected-theme', 'light', 24 * 60 * 60 * 1000);
-        } else {
-            setMode('dark');
-            setItemWithTTL('selected-theme', 'dark', 24 * 60 * 60 * 1000);
-        }
-    }
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+  }, []);
 
-    useEffect(() => {
-        window.scrollTo({top: 0, left: 0, behavior: 'smooth'});
-      }, []);
-
-    return (
-    <div className={`main-container ${mode === 'dark' ? 'dark-mode' : 'light-mode'}`}>
-        <Navigation parentToChild={{mode}} modeChange={handleModeChange}/>
-        <FadeIn transitionDuration={700}>
-            <Main/>
-            <Expertise/>
-            <Timeline/>
-            <Project/>
-            <Contact/>
-            <ChatbotWidget />
-        </FadeIn>
+  return (
+    <BrowserRouter>
+      <div
+        className={`main-container ${
+          mode === "dark" ? "dark-mode" : "light-mode"
+        }`}
+      >
+        <Navigation parentToChild={{ mode }} modeChange={handleModeChange} />
+        <Routes>
+          <Route
+            path="/portfolio"
+            element={
+              <FadeIn transitionDuration={700}>
+                <Main />
+                <Expertise />
+                <Timeline />
+                <Project />
+                <Contact />
+                <ErrorBoundary>
+                  <ChatbotWidget />
+                </ErrorBoundary>
+              </FadeIn>
+            }
+          />
+          <Route path="/portfolio/blog" element={<BlogList />} />
+          <Route path="/portfolio/blog/:slug" element={<BlogPost />} />
+        </Routes>
         <Footer />
-    </div>
-    );
+      </div>
+    </BrowserRouter>
+  );
 }
 
 export default App;

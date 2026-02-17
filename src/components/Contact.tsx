@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import '../assets/styles/Contact.scss';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -22,9 +22,8 @@ function Contact() {
   const [snackbarMsg, setSnackbarMsg] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState<AlertColor>('success');
 
-  const form = useRef();
 
-  const sendEmail = async (e: any) => {
+  const sendEmail = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
     setNameError(name === '');
@@ -33,11 +32,9 @@ function Contact() {
 
 
     if (name !== '' && email !== '' && message !== '') {
-      var templateParams = {name, email, message};
+      const formspreeUrl = process.env.REACT_APP_FORMSPREE_URL || 'https://formspree.io/f/xyzzawnd';
 
-      console.log(templateParams);
-
-      fetch('https://formspree.io/f/xyzzawnd', {
+      fetch(formspreeUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json'},
         body: JSON.stringify({
@@ -82,7 +79,6 @@ function Contact() {
           <h1>Contact Me</h1>
           <p>Got a project waiting to be realized? Let's collaborate and make it happen!</p>
           <Box
-            ref={form}
             component="form"
             noValidate
             autoComplete="off"
@@ -91,7 +87,7 @@ function Contact() {
             <div className='form-flex'>
               <TextField
                 required
-                id="outlined-required"
+                id="contact-name"
                 label="Your Name"
                 placeholder="What's your name?"
                 value={name}
@@ -104,7 +100,7 @@ function Contact() {
               />
               <TextField
                 required
-                id="outlined-required"
+                id="contact-email"
                 label="Email / Phone"
                 placeholder="How can I reach you?"
                 value={email}
@@ -118,7 +114,7 @@ function Contact() {
             </div>
             <TextField
               required
-              id="outlined-multiline-static"
+              id="contact-message"
               label="Message"
               placeholder="Send me any inquiries or questions"
               multiline

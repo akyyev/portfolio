@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -17,11 +18,19 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Toolbar from '@mui/material/Toolbar';
 
 const drawerWidth = 240;
-const navItems = [['Home', 'home'],['Expertise', 'expertise'], ['History', 'history'], ['Projects', 'projects'], ['Contact', 'contact']];
+const navItems = [['Home', 'home'],['Expertise', 'expertise'], ['History', 'history'], ['Projects', 'projects'], ['Contact', 'contact'], ['Blog', 'blog']];
 
-function Navigation({parentToChild, modeChange}: any) {
+interface NavigationProps {
+  parentToChild: { mode: string };
+  modeChange: () => void;
+}
+
+function Navigation({parentToChild, modeChange}: NavigationProps) {
 
   const {mode} = parentToChild;
+  const location = useLocation();
+  const navigate = useNavigate();
+  const isBlogPage = location.pathname.startsWith('/portfolio/blog');
 
   const [mobileOpen, setMobileOpen] = useState<boolean>(false);
   const [scrolled, setScrolled] = useState<boolean>(false);
@@ -47,11 +56,26 @@ function Navigation({parentToChild, modeChange}: any) {
   }, []);
 
   const scrollToSection = (section: string) => {
-    const expertiseElement = document.getElementById(section);
-    if (expertiseElement) {
-      expertiseElement.scrollIntoView({ behavior: 'smooth' });
+    if (section === 'blog') {
+      navigate('/portfolio/blog');
+      return;
+    }
+
+    if (isBlogPage) {
+      // Navigate home first, then scroll
+      navigate('/portfolio');
+      setTimeout(() => {
+        const el = document.getElementById(section);
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }, 300);
+      return;
+    }
+
+    const el = document.getElementById(section);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
     } else {
-      console.error('Element with id "expertise" not found');
+      console.error(`Element with id "${section}" not found`);
     }
   };
 
@@ -86,9 +110,13 @@ function Navigation({parentToChild, modeChange}: any) {
             <MenuIcon />
           </IconButton>
           {mode === 'dark' ? (
-            <LightModeIcon onClick={() => modeChange()}/>
+            <IconButton onClick={() => modeChange()} aria-label="Switch to light mode" color="inherit">
+              <LightModeIcon />
+            </IconButton>
           ) : (
-            <DarkModeIcon onClick={() => modeChange()}/>
+            <IconButton onClick={() => modeChange()} aria-label="Switch to dark mode" color="inherit">
+              <DarkModeIcon />
+            </IconButton>
           )}
           <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
             {navItems.map((item) => (
