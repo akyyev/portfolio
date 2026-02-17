@@ -7,21 +7,66 @@
 
 .contact-form {
   padding: 20px;
-  border-radius: 8px;
-  background-color: white;
+  border-radius: 12px;
+  background-color: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+
+  .MuiOutlinedInput-root {
+    color: #f0f0f0;
+
+    fieldset {
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    &:hover fieldset {
+      border-color: rgba(255, 255, 255, 0.4);
+    }
+  }
+
+  .MuiInputLabel-root {
+    color: rgba(255, 255, 255, 0.6);
+  }
 
   button {
+    background-color: #7c4dff;
+    color: #fff;
     float: right;
-    background-color: white;
-    color: #050f0b;
+    border-radius: 8px;
+    padding: 8px 24px;
+    transition: background-color 0.2s;
   }
 
   button:hover {
     background-color: #5000ca;
     color: white;
   }
+}
 
-  /* fieldset { background-color: aliceblue; } */
+.light-mode .contact-form {
+  background-color: #fff;
+  border-color: rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+
+  .MuiOutlinedInput-root {
+    color: #333;
+
+    fieldset {
+      border-color: rgba(0, 0, 0, 0.2);
+    }
+  }
+
+  .MuiInputLabel-root {
+    color: rgba(0, 0, 0, 0.5);
+  }
+
+  button {
+    background-color: #5000ca;
+    color: #fff;
+  }
+
+  button:hover {
+    background-color: #3d00a0;
+  }
 }
 
 label {

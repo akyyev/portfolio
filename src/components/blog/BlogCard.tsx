@@ -8,14 +8,14 @@ interface BlogCardProps {
 }
 
 const BlogCard: React.FC<BlogCardProps> = ({ post }) => {
-  const formattedDate = new Date(post.date).toLocaleDateString("en-US", {
+  const formattedDate = new Date(post.date + "T00:00:00").toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
     day: "numeric",
   });
 
   return (
-    <Link to={`/portfolio/blog/${post.slug}`} className="blog-card-link">
+    <Link to={`/blog/${post.slug}`} className="blog-card-link">
       <article className="blog-card">
         <div className="blog-card-header">
           <time dateTime={post.date}>{formattedDate}</time>

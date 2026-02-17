@@ -44,13 +44,39 @@
     color: #333;
   }
 
+  .chatbot-form-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 4px;
+  }
+
   .chatbot-form-submit {
+    flex: 1;
     background: #1976d2;
     color: #fff;
     border: none;
     border-radius: 10px;
-    padding: 10px 0;
-    font-size: 14px;
+    padding: 8px 0;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .chatbot-form-cancel {
+    flex: 1;
+    background: #f0f0f0;
+    color: #333;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 8px 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      background: #e0e0e0;
+    }
   }
 }

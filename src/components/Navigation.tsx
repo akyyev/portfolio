@@ -30,10 +30,11 @@ function Navigation({parentToChild, modeChange}: NavigationProps) {
   const {mode} = parentToChild;
   const location = useLocation();
   const navigate = useNavigate();
-  const isBlogPage = location.pathname.startsWith('/portfolio/blog');
+  const isBlogPage = location.pathname.startsWith('/blog');
 
   const [mobileOpen, setMobileOpen] = useState<boolean>(false);
   const [scrolled, setScrolled] = useState<boolean>(false);
+  const scrollIntervalRef = React.useRef<ReturnType<typeof setInterval> | null>(null);
 
   const handleDrawerToggle = () => {
     setMobileOpen((prevState) => !prevState);
@@ -52,22 +53,32 @@ function Navigation({parentToChild, modeChange}: NavigationProps) {
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
+      if (scrollIntervalRef.current) clearInterval(scrollIntervalRef.current);
     };
   }, []);
 
   const scrollToSection = (section: string) => {
     if (section === 'blog') {
-      navigate('/portfolio/blog');
+      navigate('/blog');
       return;
     }
 
     if (isBlogPage) {
-      // Navigate home first, then scroll
-      navigate('/portfolio');
-      setTimeout(() => {
+      navigate('/');
+      // Clear any existing scroll interval before starting a new one
+      if (scrollIntervalRef.current) clearInterval(scrollIntervalRef.current);
+      let attempts = 0;
+      scrollIntervalRef.current = setInterval(() => {
         const el = document.getElementById(section);
-        if (el) el.scrollIntoView({ behavior: 'smooth' });
-      }, 300);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth' });
+          clearInterval(scrollIntervalRef.current!);
+          scrollIntervalRef.current = null;
+        } else if (++attempts >= 20) {
+          clearInterval(scrollIntervalRef.current!);
+          scrollIntervalRef.current = null;
+        }
+      }, 100);
       return;
     }
 
@@ -120,7 +131,7 @@ function Navigation({parentToChild, modeChange}: NavigationProps) {
           )}
           <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
             {navItems.map((item) => (
-              <Button key={item[0]} onClick={() => scrollToSection(item[1])} sx={{ color: '#fff' }}>
+              <Button key={item[0]} onClick={() => scrollToSection(item[1])} sx={{ color: 'inherit' }}>
                 {item[0]}
               </Button>
             ))}

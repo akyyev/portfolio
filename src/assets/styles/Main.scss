@@ -25,10 +25,16 @@
         display: flex;
         flex-direction: row;
         gap: 10px;
-        color: white;
+        color: inherit;
 
         svg {
             font-size: 1.8em;
+            color: inherit;
+            transition: color 0.2s;
+
+            &:hover {
+                color: #7c4dff;
+            }
         }
     }
 
@@ -82,7 +88,7 @@
             padding: 10px 15px;
             list-style:none;
             font-size:13px;
-            color:white;
+            color: inherit;
             width: 10%;
         }
 
@@ -126,10 +132,11 @@
             display: flex !important;
             flex-direction: row;
             gap: 10px;
-            color: white;
+            color: inherit;
     
             svg {
                 font-size: 1.8em;
+                color: inherit;
             }
         }
 

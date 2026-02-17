@@ -23,41 +23,39 @@ import React, {
     const WrapperTag = props.wrapperTag || "div";
     const ChildTag = props.childTag || "div";
     const visible = typeof props.visible === "undefined" ? true : props.visible;
+    const { onComplete, children } = props;
+    const childCount = React.Children.count(children);
   
     useEffect(() => {
-      let count = React.Children.count(props.children);
+      let count = childCount;
       if (!visible) {
-        // Animate all children out
         count = 0;
       }
   
       if (count === maxIsVisible) {
-        // We're done updating maxVisible, notify when animation is done
         const timeout = setTimeout(() => {
-          if (props.onComplete) props.onComplete();
+          if (onComplete) onComplete();
         }, transitionDuration);
         return () => clearTimeout(timeout);
       }
   
-      // Move maxIsVisible toward count
       const increment = count > maxIsVisible ? 1 : -1;
       const timeout = setTimeout(() => {
         setMaxIsVisible(maxIsVisible + increment);
       }, delay);
       return () => clearTimeout(timeout);
-      // eslint-disable-next-line
     }, [
-      // eslint-disable-next-line
-      React.Children.count(props.children),
+      childCount,
       delay,
       maxIsVisible,
       visible,
       transitionDuration,
+      onComplete,
     ]);
   
     return (
       <WrapperTag className={props.className}>
-        {React.Children.map(props.children, (child, i) => {
+        {React.Children.map(children, (child, i) => {
           return (
             <ChildTag
               className={props.childClassName}

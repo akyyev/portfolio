@@ -8,6 +8,8 @@ import ActionProvider from "./chatbot/ActionProvider";
 import "../assets/styles/ChatbotWidget.scss";
 import chatbotIcon from "../assets/images/image.png";
 import notificationSound from "../assets/sounds/notification.mp3";
+import ChatIcon from '@mui/icons-material/Chat';
+import CloseIcon from '@mui/icons-material/Close';
 
 import { createChatBotMessage } from "react-chatbot-kit";
 
@@ -16,6 +18,7 @@ const ChatbotWidget: React.FC = () => {
   const [showIcon, setShowIcon] = useState(false);
   const [messages, setMessages] = useState<IMessage[]>([]);
   const chatbotRef = useRef<HTMLDivElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
 
   const isMountedRef = useRef(true);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -59,21 +62,38 @@ const ChatbotWidget: React.FC = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  // Close chatbot on outside click
+  // Close chatbot or form on outside click
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (chatbotRef.current && !chatbotRef.current.contains(event.target as Node)) {
+      const target = event.target as Node;
+      if (isOpen && chatbotRef.current && !chatbotRef.current.contains(target)) {
         setIsOpen(false);
+      }
+      if (showForm && formRef.current && !formRef.current.contains(target)) {
+        setShowForm(false);
       }
     };
 
-    if (isOpen) {
+    if (isOpen || showForm) {
       document.addEventListener("mousedown", handleClickOutside);
     }
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isOpen]);
+  }, [isOpen, showForm]);
+
+  // Close form on Escape
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        if (showForm) setShowForm(false);
+        if (isOpen) setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
+  }, [showForm, isOpen]);
 
   const toggleChatbot = () => {
     if (!userInfo) {
@@ -105,7 +125,7 @@ const ChatbotWidget: React.FC = () => {
           </button>
 
           {showForm && !userInfo && (
-            <form className="chatbot-form" onSubmit={handleFormSubmit}>
+            <form className="chatbot-form" onSubmit={handleFormSubmit} ref={formRef}>
               <label htmlFor="chatbot-name" className="sr-only">Your name</label>
               <input
                 id="chatbot-name"
@@ -124,7 +144,10 @@ const ChatbotWidget: React.FC = () => {
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
                 required
               />
-              <button type="submit" className="chatbot-form-submit">Start Chat</button>
+              <div className="chatbot-form-actions">
+                <button type="submit" className="chatbot-form-submit" aria-label="Start chat"><ChatIcon fontSize="small" /></button>
+                <button type="button" className="chatbot-form-cancel" onClick={() => setShowForm(false)} aria-label="Close"><CloseIcon fontSize="small" /></button>
+              </div>
             </form>
           )}
 

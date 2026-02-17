@@ -23,6 +23,8 @@ function Contact() {
   const [snackbarSeverity, setSnackbarSeverity] = useState<AlertColor>('success');
 
 
+  const [submitting, setSubmitting] = useState(false);
+
   const sendEmail = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
@@ -30,40 +32,40 @@ function Contact() {
     setEmailError(email === '');
     setMessageError(message === '');
 
+    if (name === '' || email === '' || message === '') return;
 
-    if (name !== '' && email !== '' && message !== '') {
+    setSubmitting(true);
+
+    try {
       const formspreeUrl = process.env.REACT_APP_FORMSPREE_URL || 'https://formspree.io/f/xyzzawnd';
-
-      fetch(formspreeUrl, {
+      const response = await fetch(formspreeUrl, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json'},
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           subject: "Portfolio Contact Form, Email: " + email,
           name,
           email: myEmail,
-          message
+          message,
         }),
-      })
-      .then(
-        response => {
-          if(response.ok) {
-            console.log('SUCCESS!', response.status, response.text);
-            setSnackbarMsg("Message delivered successfully!");
-            setSnackbarSeverity('success');
-            setSnackbarOpen(true);
-          } else {
-            console.log('FAILED...', response.status, response.text);
-            setSnackbarMsg("Failed to send message, try again later.");
-            setSnackbarSeverity('error');
-            setSnackbarOpen(true);
-          }
-        },
-        error => console.log('FAILED...', error)
-      );
+      });
 
-      setName('');
-      setEmail('');
-      setMessage('');
+      if (response.ok) {
+        setSnackbarMsg("Message delivered successfully!");
+        setSnackbarSeverity('success');
+        setName('');
+        setEmail('');
+        setMessage('');
+      } else {
+        setSnackbarMsg("Failed to send message, try again later.");
+        setSnackbarSeverity('error');
+      }
+    } catch (error) {
+      console.error('Send failed:', error);
+      setSnackbarMsg("Failed to send message, try again later.");
+      setSnackbarSeverity('error');
+    } finally {
+      setSnackbarOpen(true);
+      setSubmitting(false);
     }
   };
 
@@ -128,8 +130,8 @@ function Contact() {
               error={messageError}
               helperText={messageError ? "Please enter the message" : ""}
             />
-            <Button variant="contained" endIcon={<SendIcon />} onClick={sendEmail}>
-              Send
+            <Button variant="contained" endIcon={<SendIcon />} onClick={sendEmail} disabled={submitting}>
+              {submitting ? 'Sending...' : 'Send'}
             </Button>
           </Box>
         </div>

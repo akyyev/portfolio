@@ -1,5 +1,5 @@
 import React from "react";
-import '@fortawesome/free-regular-svg-icons';
+import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faJava, faDocker, faPhoenixFramework } from '@fortawesome/free-brands-svg-icons';
 import { faMicrochip } from "@fortawesome/free-solid-svg-icons";
@@ -7,7 +7,7 @@ import Chip from '@mui/material/Chip';
 import '../assets/styles/Expertise.scss';
 
 type Skill = {
-    icon: any; 
+    icon: IconDefinition;
     title: string;
     description: string;
     techStack: string[];

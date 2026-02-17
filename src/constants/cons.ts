@@ -1,10 +1,8 @@
 
-export const APP_NAME = "My React App";
-
 export const email = 'ba.akyyev@gmail.com'
 export const url = {
     GIT_URL : "https://github.com/akyyev",
-    LINKEDIN_URL : "https://www.linkedin.com/in/akyyev",
+    LINKEDIN_URL : "https://www.linkedin.com/in/akyyev/",
 }
 
 export const timelineElements = [

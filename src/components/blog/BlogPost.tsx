@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { marked } from "marked";
+import DOMPurify from "dompurify";
 import Chip from "@mui/material/Chip";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import GiscusComments from "./GiscusComments";
+import ShareButton from "./ShareButton";
 import { parseFrontmatter, toPostMeta } from "./frontmatter";
 import type { BlogPostMeta } from "./types";
 import "../../assets/styles/Blog.scss";
@@ -61,7 +62,7 @@ const BlogPost: React.FC = () => {
       <div className="blog-container">
         <div className="blog-error">
           <h2>{error || "Post not found"}</h2>
-          <Link to="/portfolio/blog" className="blog-back-link">
+          <Link to="/blog" className="blog-back-link">
             <ArrowBackIcon fontSize="small" /> Back to Blog
           </Link>
         </div>
@@ -69,7 +70,7 @@ const BlogPost: React.FC = () => {
     );
   }
 
-  const formattedDate = new Date(meta.date).toLocaleDateString("en-US", {
+  const formattedDate = new Date(meta.date + "T00:00:00").toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
     day: "numeric",
@@ -77,11 +78,11 @@ const BlogPost: React.FC = () => {
 
   // Strip the first H1 from markdown body (we render it from metadata)
   const contentWithoutTitle = content.replace(/^\s*#\s+.+\n/, "");
-  const htmlContent = marked(contentWithoutTitle) as string;
+  const htmlContent = DOMPurify.sanitize(marked(contentWithoutTitle) as string);
 
   return (
     <div className="blog-container">
-      <Link to="/portfolio/blog" className="blog-back-link">
+      <Link to="/blog" className="blog-back-link">
         <ArrowBackIcon fontSize="small" /> Back to Blog
       </Link>
 
@@ -98,6 +99,7 @@ const BlogPost: React.FC = () => {
               <Chip key={tag} label={tag} size="small" className="blog-tag-chip" />
             ))}
           </div>
+          <ShareButton title={meta.title} slug={meta.slug} />
         </header>
 
         <div
@@ -105,10 +107,6 @@ const BlogPost: React.FC = () => {
           dangerouslySetInnerHTML={{ __html: htmlContent }}
         />
       </article>
-
-      <section className="blog-comments-section">
-        <GiscusComments term={meta.slug} />
-      </section>
     </div>
   );
 };

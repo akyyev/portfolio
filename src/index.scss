@@ -29,7 +29,8 @@ code {
 .main-container {
   position: relative;
   background-color: #1d2c39;
-
+  color: #f0f0f0;
+  min-height: 100vh;
 }
 
 a {
@@ -37,13 +38,21 @@ a {
 }
 
 a:hover {
-  color: #5000ca;
+  color: #7c4dff;
   transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out;
 }
 
-p, a, h1, h2, h3, h4, h5, label, button {
-  color: white;
+p, a, h1, h2, h3, h4, h5, h6, label, button, span, li, td, th, time {
+  color: inherit;
   font-family: "Lato", sans-serif;
+}
+
+.dark-mode {
+  color: #f0f0f0;
+}
+
+.light-mode {
+  color: #1a1a1a;
 }
 
 .markdown-message * {
@@ -52,18 +61,25 @@ p, a, h1, h2, h3, h4, h5, label, button {
 
 .navigation-bar {
   justify-content: space-between;
-  background-color:  #1d2c39;
+  background-color: #1d2c39;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
 
   button {
     font-size: 1.1rem;
     font-family: "Lato", sans-serif;
     text-transform: initial;
     padding: 6px 10px;
+    color: #f0f0f0;
   }
 
   svg {
     cursor: pointer;
+    color: #f0f0f0;
   }
+}
+
+.navbar-fixed-top.scrolled .navigation-bar {
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
 }
 
 .navigation-bar-responsive {
@@ -114,19 +130,18 @@ p, a, h1, h2, h3, h4, h5, label, button {
 
   .navigation-bar {
     background-color: #f8f9fa;
+
+    button, svg {
+      color: #0d1116;
+    }
   }
 
-  p, a, h1, h2, h3, h4, h5, label, button {
-    color: #0d1116;
+  .navbar-fixed-top.scrolled .navigation-bar {
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
   }
 
   a:hover {
     color: #5000ca;
-    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out;
-  }
-
-  .navigation-bar svg {
-    color: #0d1116;
   }
 
   .about-section {
@@ -155,11 +170,11 @@ p, a, h1, h2, h3, h4, h5, label, button {
   }
 
   .vertical-timeline-element-content-arrow {
-    border-right: 7px solid rgba(0, 0, 0, 0.08) !important;
+    border-right: 7px solid white !important;
   }
 
   .flex-chips .chip-title {
-    color: #0d1116;
+    color: inherit;
   }
 }
 

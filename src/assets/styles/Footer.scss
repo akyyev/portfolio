@@ -2,14 +2,22 @@ footer {
     text-align: center;
     padding-top: 50px;
     padding-bottom: 50px;
+    color: inherit;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
 
     svg {
         width: 1.1em !important;
         height: 1.1em !important;
         margin-right: 10px;
+        color: inherit;
     }
 
     p {
         font-size: 0.8em;
+        opacity: 0.7;
     }
+}
+
+.light-mode footer {
+    border-top-color: rgba(0, 0, 0, 0.08);
 }

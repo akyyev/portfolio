@@ -1,6 +1,11 @@
 import { createChatBotMessage } from "react-chatbot-kit";
-import {CustomBotAvatar, CustomUserAvatar} from "./CustomAvatar";
+import { CustomBotAvatar, CustomUserAvatar } from "./CustomAvatar";
 import MarkdownMessage from "./CustomMarkDown";
+
+interface ChatMessageProps {
+  message: string;
+  loader?: React.ReactElement;
+}
 
 const config = {
   botName: "AI Assistant",
@@ -21,9 +26,8 @@ const config = {
   customComponents: {
     botAvatar: CustomBotAvatar,
     userAvatar: CustomUserAvatar,
-    // if needed comment line below to use default configuration
-    botChatMessage: (props: any) => <MarkdownMessage {...props} type="robot"/>,
-    userChatMessage: (props: any) => <MarkdownMessage {...props} type="user"/>,
+    botChatMessage: (props: ChatMessageProps) => <MarkdownMessage {...props} type="robot" />,
+    userChatMessage: (props: ChatMessageProps) => <MarkdownMessage {...props} type="user" />,
   },
 };
 

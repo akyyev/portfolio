@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import React, { useState, useEffect, lazy, Suspense } from "react";
+import { HashRouter, Routes, Route } from "react-router-dom";
 import {
   Main,
   Timeline,
@@ -10,19 +10,24 @@ import {
   Footer,
 } from "./components";
 import FadeIn from "./components/FadeIn";
-import BlogList from "./components/blog/BlogList";
-import BlogPost from "./components/blog/BlogPost";
 import ErrorBoundary from "./components/ErrorBoundary";
 import ChatbotWidget from "./components/ChatbotWidget";
-import "./index.scss";
 import { getItemWithTTL, setItemWithTTL } from "./utils/theme";
 
-function App() {
-  const hour = new Date().getHours();
-  const defaultTheme = hour >= 6 && hour < 18 ? "light" : "dark";
-  const selectedTheme = getItemWithTTL("selected-theme") || defaultTheme;
+const BlogList = lazy(() => import("./components/blog/BlogList"));
+const BlogPost = lazy(() => import("./components/blog/BlogPost"));
+const NotFound = lazy(() => import("./components/NotFound"));
 
-  const [mode, setMode] = useState<string>(selectedTheme);
+const PageLoader = () => (
+  <div style={{ padding: '2rem', textAlign: 'center' }}>Loading...</div>
+);
+
+function App() {
+  const [mode, setMode] = useState<string>(() => {
+    const hour = new Date().getHours();
+    const defaultTheme = hour >= 6 && hour < 18 ? "light" : "dark";
+    return getItemWithTTL("selected-theme") || defaultTheme;
+  });
 
   const handleModeChange = () => {
     const next = mode === "dark" ? "light" : "dark";
@@ -35,7 +40,7 @@ function App() {
   }, []);
 
   return (
-    <BrowserRouter>
+    <HashRouter>
       <div
         className={`main-container ${
           mode === "dark" ? "dark-mode" : "light-mode"
@@ -44,7 +49,7 @@ function App() {
         <Navigation parentToChild={{ mode }} modeChange={handleModeChange} />
         <Routes>
           <Route
-            path="/portfolio"
+            path="/"
             element={
               <FadeIn transitionDuration={700}>
                 <Main />
@@ -52,18 +57,31 @@ function App() {
                 <Timeline />
                 <Project />
                 <Contact />
-                <ErrorBoundary>
-                  <ChatbotWidget />
-                </ErrorBoundary>
               </FadeIn>
             }
           />
-          <Route path="/portfolio/blog" element={<BlogList />} />
-          <Route path="/portfolio/blog/:slug" element={<BlogPost />} />
+          <Route path="/blog" element={
+            <Suspense fallback={<PageLoader />}>
+              <BlogList />
+            </Suspense>
+          } />
+          <Route path="/blog/:slug" element={
+            <Suspense fallback={<PageLoader />}>
+              <BlogPost />
+            </Suspense>
+          } />
+          <Route path="*" element={
+            <Suspense fallback={<PageLoader />}>
+              <NotFound />
+            </Suspense>
+          } />
         </Routes>
         <Footer />
+        <ErrorBoundary>
+          <ChatbotWidget />
+        </ErrorBoundary>
       </div>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 
