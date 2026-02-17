@@ -6,9 +6,9 @@ interface GiscusCommentsProps {
 
 const GISCUS_CONFIG = {
   repo: "akyyev/portfolio",
-  repoId: "",           // Fill after enabling Discussions
-  category: "Blog Comments",
-  categoryId: "",       // Fill after creating category
+  repoId: "R_kgDON9FITA",           // Fill after enabling Discussions
+  category: "Blog comments",
+  categoryId: "DIC_kwDON9FITM4C2mRT",       // Fill after creating category
   mapping: "specific",
   reactionsEnabled: "1",
   emitMetadata: "0",
