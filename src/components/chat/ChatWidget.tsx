@@ -164,7 +164,7 @@ const ChatWidget: React.FC = () => {
       const apiMessages = formatMessagesForApi(currentMessages);
       
       // Call API
-      const reply = await sendChatMessage(apiMessages);
+      const reply = await sendChatMessage(apiMessages, userInfo ?? undefined);
 
       const botResponse: Message = {
         id: `bot-${Date.now()}`,
@@ -185,7 +185,7 @@ const ChatWidget: React.FC = () => {
     } finally {
       setIsTyping(false);
     }
-  }, [inputValue, messages]);
+  }, [inputValue, messages, userInfo]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {

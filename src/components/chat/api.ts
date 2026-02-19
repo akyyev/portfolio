@@ -5,6 +5,11 @@ interface ChatMessage {
   content: string;
 }
 
+interface UserInfo {
+  name: string,
+  email: string
+}
+
 const API_URL = process.env.REACT_APP_API_URL;
 
 const getAxiosInstance = (): AxiosInstance | null => {
@@ -16,7 +21,8 @@ const getAxiosInstance = (): AxiosInstance | null => {
 };
 
 export const sendChatMessage = async (
-  messages: ChatMessage[]
+  messages: ChatMessage[],
+  userInfo?: UserInfo
 ): Promise<string> => {
   const axiosInstance = getAxiosInstance();
   
@@ -28,6 +34,7 @@ export const sendChatMessage = async (
     const payload = {
       messages,
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      ...(userInfo && {user: userInfo}),
     };
     const response = await axiosInstance.post('/', payload);
     return response.data.reply;
