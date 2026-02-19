@@ -156,7 +156,7 @@ const ChatWidget: React.FC = () => {
     try {
       // Check if API is configured
       if (!isApiConfigured()) {
-        throw new Error('Chat API is not configured.');
+        throw new Error('Chat is currently unavailable. Please try the contact form instead!');
       }
 
       // Format message history for API
@@ -175,9 +175,19 @@ const ChatWidget: React.FC = () => {
 
       setMessages(prev => [...prev, botResponse]);
     } catch (error) {
+      // User-friendly error messages
+      let errorMsg = 'Oops! Something went wrong. Please try again or use the contact form.';
+      if (error instanceof Error) {
+        if (error.message.includes('network') || error.message.includes('fetch')) {
+          errorMsg = 'Network issue detected. Please check your connection and try again.';
+        } else if (error.message.includes('unavailable') || error.message.includes('contact form')) {
+          errorMsg = error.message;
+        }
+      }
+      
       const errorMessage: Message = {
         id: `error-${Date.now()}`,
-        content: error instanceof Error ? error.message : 'Something went wrong. Please try again.',
+        content: errorMsg,
         sender: 'bot',
         timestamp: new Date(),
       };

@@ -63,7 +63,7 @@ const BlogList: React.FC = () => {
   return (
     <div className="blog-container">
       <div className="blog-header">
-        <h1>Blog</h1>
+        <h1>Blogs</h1>
         <p className="blog-subtitle">
           Thoughts on software engineering, AI, and career growth.
         </p>

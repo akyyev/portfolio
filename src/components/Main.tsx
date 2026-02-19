@@ -1,34 +1,29 @@
 import React from "react";
-import GitHubIcon from '@mui/icons-material/GitHub';
-import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import '../assets/styles/Main.scss';
 import avatar from '../assets/images/pro.png';
-import { url } from "../constants/cons";
+import SocialLinks from './SocialLinks';
 
 function Main() {
-
   return (
-    <div id='home' className="container">
+    <section id="home" className="container" aria-labelledby="hero-title">
       <div className="about-section">
         <div className="image-wrapper">
-          <img src={avatar} alt="Avatar" />
+          <img src={avatar} alt="Bagtyyar Akyyev - Software Engineer" />
         </div>
         <div className="content">
-          <div className="social_icons">
-            <a href={url.GIT_URL} target="_blank" rel="noreferrer" aria-label="GitHub Profile"><GitHubIcon/></a>
-            <a href={url.LINKEDIN_URL} target="_blank" rel="noreferrer" aria-label="LinkedIn Profile"><LinkedInIcon/></a>
-          </div>
-          <h1>Hi, I'm Bagtyyar.</h1>
-          <p>Software Development Engineer
-          <br/>Avid Traveler 🌍, Tech Enthusiast 🤖, Cyclist 🚴, Former SDET 💻</p>
-
-          <div className="mobile_social_icons">
-            <a href={url.GIT_URL} target="_blank" rel="noreferrer" aria-label="GitHub Profile"><GitHubIcon/></a>
-            <a href={url.LINKEDIN_URL} target="_blank" rel="noreferrer" aria-label="LinkedIn Profile"><LinkedInIcon/></a>
-          </div>
+          <SocialLinks className="social_icons" />
+          <h1 id="hero-title">Hi, I'm Bagtyyar.</h1>
+          <p>
+            Software Development Engineer
+            <br />
+            <span aria-label="Avid Traveler, Tech Enthusiast, Cyclist, Former SDET">
+              Avid Traveler 🌍, Tech Enthusiast 🤖, Cyclist 🚴, Former SDET 💻
+            </span>
+          </p>
+          <SocialLinks className="mobile_social_icons" />
         </div>
       </div>
-    </div>
+    </section>
   );
 }
 

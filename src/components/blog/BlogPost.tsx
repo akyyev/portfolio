@@ -63,7 +63,7 @@ const BlogPost: React.FC = () => {
         <div className="blog-error">
           <h2>{error || "Post not found"}</h2>
           <Link to="/blog" className="blog-back-link">
-            <ArrowBackIcon fontSize="small" /> Back to Blog
+            <ArrowBackIcon fontSize="small" /> Back to Blogs
           </Link>
         </div>
       </div>
@@ -83,7 +83,7 @@ const BlogPost: React.FC = () => {
   return (
     <div className="blog-container">
       <Link to="/blog" className="blog-back-link">
-        <ArrowBackIcon fontSize="small" /> Back to Blog
+        <ArrowBackIcon fontSize="small" /> Back to Blogs
       </Link>
 
       <article className="blog-post">

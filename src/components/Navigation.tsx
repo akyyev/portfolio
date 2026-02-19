@@ -18,7 +18,33 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Toolbar from '@mui/material/Toolbar';
 
 const drawerWidth = 240;
-const navItems = [['Home', 'home'],['Expertise', 'expertise'], ['History', 'history'], ['Projects', 'projects'], ['Contact', 'contact'], ['Blog', 'blog']];
+
+// Type-safe navigation items
+interface NavItem {
+  label: string;
+  id: string;
+  isPage?: boolean; // true for items that open separate pages
+}
+
+// In-page sections (scroll to)
+const sectionItems: NavItem[] = [
+  { label: 'Home', id: 'home' },
+  { label: 'Expertise', id: 'expertise' },
+  { label: 'History', id: 'history' },
+  { label: 'Contact', id: 'contact' },
+];
+
+// Separate pages
+const pageItems: NavItem[] = [
+  { label: 'Projects', id: 'projects', isPage: true },
+  { label: 'Blogs', id: 'blog', isPage: true },
+];
+
+// Combined for easy iteration
+const allNavItems = [...sectionItems, ...pageItems];
+
+// Items that navigate to separate pages instead of scrolling
+const pageNavItems = pageItems.map(item => item.id);
 
 interface NavigationProps {
   parentToChild: { mode: string };
@@ -30,7 +56,7 @@ function Navigation({parentToChild, modeChange}: NavigationProps) {
   const {mode} = parentToChild;
   const location = useLocation();
   const navigate = useNavigate();
-  const isBlogPage = location.pathname.startsWith('/blog');
+  const isSubPage = location.pathname.startsWith('/blog') || location.pathname.startsWith('/projects');
 
   const [mobileOpen, setMobileOpen] = useState<boolean>(false);
   const [scrolled, setScrolled] = useState<boolean>(false);
@@ -58,12 +84,13 @@ function Navigation({parentToChild, modeChange}: NavigationProps) {
   }, []);
 
   const scrollToSection = (section: string) => {
-    if (section === 'blog') {
-      navigate('/blog');
+    // Handle page navigation items (blog, projects)
+    if (pageNavItems.includes(section)) {
+      navigate(`/${section}`);
       return;
     }
 
-    if (isBlogPage) {
+    if (isSubPage) {
       navigate('/');
       // Clear any existing scroll interval before starting a new one
       if (scrollIntervalRef.current) clearInterval(scrollIntervalRef.current);
@@ -95,10 +122,22 @@ function Navigation({parentToChild, modeChange}: NavigationProps) {
       <p className="mobile-menu-top"><ListIcon/>Menu</p>
       <Divider />
       <List>
-        {navItems.map((item) => (
-          <ListItem key={item[0]} disablePadding>
-            <ListItemButton sx={{ textAlign: 'center' }} onClick={() => scrollToSection(item[1])}>
-              <ListItemText primary={item[0]} />
+        {sectionItems.map((item) => (
+          <ListItem key={item.id} disablePadding>
+            <ListItemButton sx={{ textAlign: 'center' }} onClick={() => scrollToSection(item.id)}>
+              <ListItemText primary={item.label} />
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
+      <Divider sx={{ my: 1 }}>
+        <span style={{ fontSize: '0.75rem', opacity: 0.6, padding: '0 8px' }}>Pages</span>
+      </Divider>
+      <List>
+        {pageItems.map((item) => (
+          <ListItem key={item.id} disablePadding>
+            <ListItemButton sx={{ textAlign: 'center' }} onClick={() => scrollToSection(item.id)}>
+              <ListItemText primary={item.label} />
             </ListItemButton>
           </ListItem>
         ))}
@@ -129,10 +168,27 @@ function Navigation({parentToChild, modeChange}: NavigationProps) {
               <DarkModeIcon />
             </IconButton>
           )}
-          <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-            {navItems.map((item) => (
-              <Button key={item[0]} onClick={() => scrollToSection(item[1])} sx={{ color: 'inherit' }}>
-                {item[0]}
+          <Box sx={{ display: { xs: 'none', sm: 'block' }, alignItems: 'center' }}>
+            {sectionItems.map((item) => (
+              <Button key={item.id} onClick={() => scrollToSection(item.id)} sx={{ color: 'inherit' }}>
+                {item.label}
+              </Button>
+            ))}
+            <Box
+              component="span"
+              sx={{
+                display: 'inline-block',
+                width: '1px',
+                height: '20px',
+                backgroundColor: mode === 'dark' ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.3)',
+                mx: 1.5,
+                verticalAlign: 'middle',
+              }}
+              aria-hidden="true"
+            />
+            {pageItems.map((item) => (
+              <Button key={item.id} onClick={() => scrollToSection(item.id)} sx={{ color: 'inherit' }}>
+                {item.label}
               </Button>
             ))}
           </Box>

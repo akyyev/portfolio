@@ -8,31 +8,67 @@ import Snackbar from '@mui/material/Snackbar';
 import MuiAlert, { AlertColor } from '@mui/material/Alert';
 import { email as myEmail } from "../constants/cons";
 
-function Contact() {
+// Email validation regex
+const isValidEmail = (email: string): boolean => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email) || /^\+?[\d\s-]{7,}$/.test(email); // Allow email or phone
+};
 
+function Contact() {
   const [name, setName] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [message, setMessage] = useState<string>('');
 
-  const [nameError, setNameError] = useState<boolean>(false);
-  const [emailError, setEmailError] = useState<boolean>(false);
-  const [messageError, setMessageError] = useState<boolean>(false);
+  const [nameError, setNameError] = useState<string>('');
+  const [emailError, setEmailError] = useState<string>('');
+  const [messageError, setMessageError] = useState<string>('');
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMsg, setSnackbarMsg] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState<AlertColor>('success');
 
-
   const [submitting, setSubmitting] = useState(false);
 
-  const sendEmail = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  const validateForm = (): boolean => {
+    let isValid = true;
+
+    if (!name.trim()) {
+      setNameError('Please enter your name');
+      isValid = false;
+    } else if (name.trim().length < 2) {
+      setNameError('Name must be at least 2 characters');
+      isValid = false;
+    } else {
+      setNameError('');
+    }
+
+    if (!email.trim()) {
+      setEmailError('Please enter your email or phone number');
+      isValid = false;
+    } else if (!isValidEmail(email.trim())) {
+      setEmailError('Please enter a valid email or phone number');
+      isValid = false;
+    } else {
+      setEmailError('');
+    }
+
+    if (!message.trim()) {
+      setMessageError('Please enter a message');
+      isValid = false;
+    } else if (message.trim().length < 10) {
+      setMessageError('Message must be at least 10 characters');
+      isValid = false;
+    } else {
+      setMessageError('');
+    }
+
+    return isValid;
+  };
+
+  const sendEmail = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    setNameError(name === '');
-    setEmailError(email === '');
-    setMessageError(message === '');
-
-    if (name === '' || email === '' || message === '') return;
+    if (!validateForm()) return;
 
     setSubmitting(true);
 
@@ -42,7 +78,7 @@ function Contact() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          subject: "Portfolio Contact Form, Email: " + email,
+          subject: `Portfolio Contact Form, Email: ${email}`,
           name,
           email: myEmail,
           message,
@@ -50,18 +86,18 @@ function Contact() {
       });
 
       if (response.ok) {
-        setSnackbarMsg("Message delivered successfully!");
+        setSnackbarMsg('Message delivered successfully!');
         setSnackbarSeverity('success');
         setName('');
         setEmail('');
         setMessage('');
       } else {
-        setSnackbarMsg("Failed to send message, try again later.");
+        setSnackbarMsg('Failed to send message, try again later.');
         setSnackbarSeverity('error');
       }
     } catch (error) {
       console.error('Send failed:', error);
-      setSnackbarMsg("Failed to send message, try again later.");
+      setSnackbarMsg('Failed to send message, try again later.');
       setSnackbarSeverity('error');
     } finally {
       setSnackbarOpen(true);
@@ -73,20 +109,24 @@ function Contact() {
     setSnackbarOpen(false);
   };
 
-
   return (
-    <div id="contact">
+    <section id="contact" aria-labelledby="contact-heading">
       <div className="items-container">
         <div className="contact_wrapper">
-          <h1>Contact Me</h1>
+          <h1 id="contact-heading">Contact Me</h1>
           <p>Got a project waiting to be realized? Let's collaborate and make it happen!</p>
           <Box
             component="form"
             noValidate
             autoComplete="off"
-            className='contact-form'
+            className="contact-form"
+            onSubmit={sendEmail}
+            aria-describedby="form-instructions"
           >
-            <div className='form-flex'>
+            <p id="form-instructions" className="sr-only">
+              All fields are required. Fill out the form to send me a message.
+            </p>
+            <div className="form-flex">
               <TextField
                 required
                 id="contact-name"
@@ -95,10 +135,13 @@ function Contact() {
                 value={name}
                 onChange={(e) => {
                   setName(e.target.value);
-                  if (e.target.value !== '') setNameError(false);
+                  if (e.target.value.trim()) setNameError('');
                 }}
-                error={nameError}
-                helperText={nameError ? "Please enter your name" : ""}
+                error={!!nameError}
+                helperText={nameError}
+                inputProps={{
+                  'aria-describedby': nameError ? 'contact-name-error' : undefined,
+                }}
               />
               <TextField
                 required
@@ -108,10 +151,13 @@ function Contact() {
                 value={email}
                 onChange={(e) => {
                   setEmail(e.target.value);
-                  if (e.target.value !== '') setEmailError(false);
+                  if (e.target.value.trim()) setEmailError('');
                 }}
-                error={emailError}
-                helperText={emailError ? "Please enter your email or phone number" : ""}
+                error={!!emailError}
+                helperText={emailError}
+                inputProps={{
+                  'aria-describedby': emailError ? 'contact-email-error' : undefined,
+                }}
               />
             </div>
             <TextField
@@ -125,28 +171,42 @@ function Contact() {
               value={message}
               onChange={(e) => {
                 setMessage(e.target.value);
-                if (e.target.value !== '') setMessageError(false);
+                if (e.target.value.trim()) setMessageError('');
               }}
-              error={messageError}
-              helperText={messageError ? "Please enter the message" : ""}
+              error={!!messageError}
+              helperText={messageError}
+              inputProps={{
+                'aria-describedby': messageError ? 'contact-message-error' : undefined,
+              }}
             />
-            <Button variant="contained" endIcon={<SendIcon />} onClick={sendEmail} disabled={submitting}>
+            <Button
+              type="submit"
+              variant="contained"
+              endIcon={<SendIcon />}
+              disabled={submitting}
+              aria-busy={submitting}
+            >
               {submitting ? 'Sending...' : 'Send'}
             </Button>
           </Box>
         </div>
       </div>
-       <Snackbar
+      <Snackbar
         open={snackbarOpen}
         autoHideDuration={6000}
         onClose={handleSnackbarClose}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
-        <MuiAlert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%' }}>
+        <MuiAlert
+          onClose={handleSnackbarClose}
+          severity={snackbarSeverity}
+          sx={{ width: '100%' }}
+          role="alert"
+        >
           {snackbarMsg}
         </MuiAlert>
       </Snackbar>
-    </div>
+    </section>
   );
 }
 

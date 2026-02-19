@@ -4,7 +4,6 @@ import {
   Main,
   Timeline,
   Expertise,
-  Project,
   Contact,
   Navigation,
   Footer,
@@ -16,6 +15,7 @@ import { getItemWithTTL, setItemWithTTL } from "./utils/theme";
 
 const BlogList = lazy(() => import("./components/blog/BlogList"));
 const BlogPost = lazy(() => import("./components/blog/BlogPost"));
+const ProjectList = lazy(() => import("./components/ProjectList"));
 const NotFound = lazy(() => import("./components/NotFound"));
 
 const PageLoader = () => (
@@ -46,36 +46,57 @@ function App() {
           mode === "dark" ? "dark-mode" : "light-mode"
         }`}
       >
-        <Navigation parentToChild={{ mode }} modeChange={handleModeChange} />
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <FadeIn transitionDuration={700}>
-                <Main />
-                <Expertise />
-                <Timeline />
-                <Project />
-                <Contact />
-              </FadeIn>
+        {/* Skip to main content link for keyboard users - WCAG 2.2 AA */}
+        <a
+          href="#/"
+          className="skip-link"
+          onClick={(e) => {
+            e.preventDefault();
+            const mainContent = document.getElementById('main-content');
+            if (mainContent) {
+              mainContent.focus();
+              mainContent.scrollIntoView({ behavior: 'smooth' });
             }
-          />
-          <Route path="/blog" element={
-            <Suspense fallback={<PageLoader />}>
-              <BlogList />
-            </Suspense>
-          } />
-          <Route path="/blog/:slug" element={
-            <Suspense fallback={<PageLoader />}>
-              <BlogPost />
-            </Suspense>
-          } />
-          <Route path="*" element={
-            <Suspense fallback={<PageLoader />}>
-              <NotFound />
-            </Suspense>
-          } />
-        </Routes>
+          }}
+        >
+          Skip to main content
+        </a>
+        <Navigation parentToChild={{ mode }} modeChange={handleModeChange} />
+        <main id="main-content" tabIndex={-1}>
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <FadeIn transitionDuration={700}>
+                  <Main />
+                  <Expertise />
+                  <Timeline />
+                  <Contact />
+                </FadeIn>
+              }
+            />
+            <Route path="/blog" element={
+              <Suspense fallback={<PageLoader />}>
+                <BlogList />
+              </Suspense>
+            } />
+            <Route path="/blog/:slug" element={
+              <Suspense fallback={<PageLoader />}>
+                <BlogPost />
+              </Suspense>
+            } />
+            <Route path="/projects" element={
+              <Suspense fallback={<PageLoader />}>
+                <ProjectList />
+              </Suspense>
+            } />
+            <Route path="*" element={
+              <Suspense fallback={<PageLoader />}>
+                <NotFound />
+              </Suspense>
+            } />
+          </Routes>
+        </main>
         <Footer />
         <ErrorBoundary>
           <ChatWidget />

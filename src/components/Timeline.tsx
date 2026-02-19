@@ -28,9 +28,9 @@ const TimelineElement: React.FC<TimelineElementProps> = ({ date, title, location
 
 function Timeline() {
   return (
-    <div id="history">
+    <section id="history" aria-labelledby="history-heading">
       <div className="items-container">
-        <h1>Career History</h1>
+        <h1 id="history-heading">Career History</h1>
         <VerticalTimeline>
           {timelineElements.map((element, index) => (
             <TimelineElement
@@ -43,7 +43,7 @@ function Timeline() {
           ))}
         </VerticalTimeline>
       </div>
-    </div>
+    </section>
   );
 }
 

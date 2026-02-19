@@ -93,8 +93,8 @@ const skillsData: Skill[] = [
 ];
 
 const SkillSection = ({ icon, title, description, techStack }: Skill) => (
-    <div className="skill">
-        <FontAwesomeIcon icon={icon} size="3x" />
+    <article className="skill" role="listitem">
+        <FontAwesomeIcon icon={icon} size="3x" aria-hidden="true" />
         <h3>{title}</h3>
         <p>{description}</p>
         <div className="flex-chips">
@@ -103,7 +103,7 @@ const SkillSection = ({ icon, title, description, techStack }: Skill) => (
                 <Chip key={index} className='chip' label={label} />
             ))}
         </div>
-    </div>
+    </article>
 );
 
 function Expertise() {

@@ -3,6 +3,17 @@ interface TTLItem {
   expiry: number;
 }
 
+function isValidTTLItem(item: unknown): item is TTLItem {
+  return (
+    typeof item === 'object' &&
+    item !== null &&
+    'value' in item &&
+    'expiry' in item &&
+    typeof (item as TTLItem).value === 'string' &&
+    typeof (item as TTLItem).expiry === 'number'
+  );
+}
+
 function setItemWithTTL(key: string, value: string, ttl: number): void {
   const now = new Date();
   const item: TTLItem = {
@@ -17,19 +28,30 @@ function getItemWithTTL(key: string): string | null {
   if (!itemStr) {
     return null;
   }
-  let item: TTLItem;
+
+  let parsed: unknown;
   try {
-    item = JSON.parse(itemStr);
+    parsed = JSON.parse(itemStr);
   } catch (e) {
     console.error('Error parsing JSON from localStorage', e);
     localStorage.removeItem(key);
     return null;
   }
-  if (new Date().getTime() > item.expiry) {
+
+  // Validate the item has the expected structure
+  if (!isValidTTLItem(parsed)) {
+    console.warn('Invalid TTL item structure, removing:', key);
     localStorage.removeItem(key);
     return null;
   }
-  return item.value;
+
+  // Check if expired
+  if (Date.now() > parsed.expiry) {
+    localStorage.removeItem(key);
+    return null;
+  }
+
+  return parsed.value;
 }
 
 export { setItemWithTTL, getItemWithTTL };
