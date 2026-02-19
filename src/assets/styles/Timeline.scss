@@ -1,5 +1,22 @@
+// CSS variables for theme-aware icon
+:root {
+    --timeline-icon-bg: #7c4dff; // Lighter purple for dark mode
+}
+
+.light-mode {
+    --timeline-icon-bg: #5000ca; // Original purple for light mode
+}
+
+// Timeline container card styling
 .vertical-timeline-element-content {
     border-radius: 12px;
+    background: #2a3a4a !important; // Dark mode default
+    color: #f0f0f0 !important;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+}
+
+.vertical-timeline-element-content-arrow {
+    border-right: 7px solid #2a3a4a !important;
 }
 
 .vertical-timeline span {
@@ -9,21 +26,49 @@
 
 .vertical-timeline-element p,
 .vertical-timeline-element h3,
-.vertical-timeline-element h4,
-.vertical-timeline-element span {
-    color: rgb(39, 40, 34);
+.vertical-timeline-element h4 {
+    color: #f0f0f0; // Dark mode text
 }
 
 .vertical-timeline-element .vertical-timeline-element-date {
-    color: inherit;
+    color: #b0b0b0; // Muted date text for dark mode
 }
 
 .svg-inline--fa {
     color: inherit;
 }
 
+// Light mode overrides
+.light-mode {
+    .vertical-timeline-element-content {
+        background: #ffffff !important;
+        color: rgb(39, 40, 34) !important;
+        box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 
+                    0px 2px 2px 0px rgba(0, 0, 0, 0.14), 
+                    0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+    }
+
+    .vertical-timeline-element-content-arrow {
+        border-right: 7px solid #ffffff !important;
+    }
+
+    .vertical-timeline-element p,
+    .vertical-timeline-element h3,
+    .vertical-timeline-element h4 {
+        color: rgb(39, 40, 34);
+    }
+
+    .vertical-timeline-element .vertical-timeline-element-date {
+        color: gray;
+    }
+}
+
 @media screen and (max-width: 1170px) {
     .vertical-timeline-element .vertical-timeline-element-date {
-        color: rgb(39, 40, 34);
+        color: #b0b0b0; // Dark mode
+    }
+
+    .light-mode .vertical-timeline-element .vertical-timeline-element-date {
+        color: rgb(39, 40, 34); // Light mode
     }
 }

@@ -16,10 +16,8 @@ interface TimelineElementProps {
 const TimelineElement: React.FC<TimelineElementProps> = ({ date, title, location, description }) => (
   <VerticalTimelineElement
     className="vertical-timeline-element--work"
-    contentStyle={{ background: 'white', color: 'rgb(39, 40, 34)' }}
-    contentArrowStyle={{ borderRight: '7px solid white' }}
     date={date}
-    iconStyle={{ background: '#5000ca', color: 'rgb(39, 40, 34)' }}
+    iconStyle={{ background: 'var(--timeline-icon-bg)', color: '#fff' }}
     icon={<FontAwesomeIcon icon={faBriefcase} />}
   >
     <h3 className="vertical-timeline-element-title">{title}</h3>

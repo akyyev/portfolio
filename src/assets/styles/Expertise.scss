@@ -21,19 +21,27 @@
 }
   
 .chip {
-    color: rgb(39, 40, 34) !important;
-    background-color: white !important;
     font-size: 0.8rem !important;
     height: 25px !important;
+    // Dark mode default
+    color: #f0f0f0 !important;
+    background-color: #2a3a4a !important;
   
     span {
         font-family: 'Courier Prime', monospace;
-        color: rgb(39, 40, 34);
+        color: inherit;
     }
   
     svg {
         height: 15px !important;
     }
+}
+
+// Light mode override
+.light-mode .chip {
+    color: rgb(39, 40, 34) !important;
+    background-color: rgba(0, 0, 0, 0.08) !important;
+    box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
 }
 
 .flex-chips {

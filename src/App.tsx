@@ -11,7 +11,7 @@ import {
 } from "./components";
 import FadeIn from "./components/FadeIn";
 import ErrorBoundary from "./components/ErrorBoundary";
-import ChatbotWidget from "./components/ChatbotWidget";
+import { ChatWidget } from "./components/chat";
 import { getItemWithTTL, setItemWithTTL } from "./utils/theme";
 
 const BlogList = lazy(() => import("./components/blog/BlogList"));
@@ -78,7 +78,7 @@ function App() {
         </Routes>
         <Footer />
         <ErrorBoundary>
-          <ChatbotWidget />
+          <ChatWidget />
         </ErrorBoundary>
       </div>
     </HashRouter>

@@ -84,7 +84,7 @@ p, a, h1, h2, h3, h4, h5, h6, label, button, span, li, td, th, time {
 
 .navigation-bar-responsive {
   span, p {
-    color: #0d1116;
+    color: inherit;
     font-family: "Lato", sans-serif;
   }
 }
@@ -152,26 +152,10 @@ p, a, h1, h2, h3, h4, h5, h6, label, button, span, li, td, th, time {
     color: #0d1116;
   }
 
-  .chip {
-    background-color: rgba(0, 0, 0, 0.08);
-    box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
-  }
-
   .vertical-timeline::before {
     background-color: rgba(0, 0, 0, 0.08);
   }
 
-  .vertical-timeline--animate .vertical-timeline-element-content.bounce-in {
-    box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
-  }
-
-  .vertical-timeline--two-columns .vertical-timeline-element-content .vertical-timeline-element-date {
-    color: gray;
-  }
-
-  .vertical-timeline-element-content-arrow {
-    border-right: 7px solid white !important;
-  }
 
   .flex-chips .chip-title {
     color: inherit;

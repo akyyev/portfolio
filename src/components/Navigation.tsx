@@ -148,7 +148,12 @@ function Navigation({parentToChild, modeChange}: NavigationProps) {
           }}
           sx={{
             display: { xs: 'block', sm: 'none' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+            '& .MuiDrawer-paper': { 
+              boxSizing: 'border-box', 
+              width: drawerWidth,
+              backgroundColor: mode === 'dark' ? '#1d2c39' : '#f8f9fa',
+              color: mode === 'dark' ? '#f0f0f0' : '#0d1116',
+            },
           }}
         >
           {drawer}
