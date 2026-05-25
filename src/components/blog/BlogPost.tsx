@@ -37,7 +37,9 @@ const BlogPost: React.FC = () => {
         const parsed = parseFrontmatter(raw);
 
         setMeta(toPostMeta(slug || "", parsed.attributes));
-        setContent(parsed.body);
+        setContent(
+          parsed.body.replaceAll("%PUBLIC_URL%", process.env.PUBLIC_URL)
+        );
         setLoading(false);
       } catch (err) {
         console.error("Error loading blog post:", err);

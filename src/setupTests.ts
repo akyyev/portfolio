@@ -3,3 +3,20 @@
 // expect(element).toHaveTextContent(/react/i)
 // learn more: https://github.com/testing-library/jest-dom
 import '@testing-library/jest-dom';
+import { TextDecoder, TextEncoder } from 'util';
+
+Object.assign(global, { TextDecoder, TextEncoder });
+Object.assign(window, { scrollTo: jest.fn() });
+
+class MockIntersectionObserver implements IntersectionObserver {
+  readonly root: Element | Document | null = null;
+  readonly rootMargin = '';
+  readonly thresholds: ReadonlyArray<number> = [];
+
+  disconnect = jest.fn();
+  observe = jest.fn();
+  takeRecords = jest.fn((): IntersectionObserverEntry[] => []);
+  unobserve = jest.fn();
+}
+
+Object.assign(global, { IntersectionObserver: MockIntersectionObserver });

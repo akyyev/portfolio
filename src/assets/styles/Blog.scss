@@ -275,6 +275,14 @@
     color: #7c4dff;
     text-decoration: underline;
   }
+
+  img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin: 24px 0;
+  }
 }
 
 /* Share button */
