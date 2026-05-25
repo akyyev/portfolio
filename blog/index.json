@@ -1,5 +1,19 @@
 [
   {
+    "slug": "building-russian-checkers-app",
+    "title": "Building and Deploying a Russian Checkers App",
+    "date": "2026-05-24",
+    "author": "Bagtyyar",
+    "tags": [
+      "JavaScript",
+      "HTML",
+      "CSS",
+      "WebSocket"
+    ],
+    "excerpt": "A look at the rules engine, game modes, online rooms, localization, and polish behind my recently deployed Russian draughts app.",
+    "readTime": "7 min read"
+  },
+  {
     "slug": "getting-started-with-genai",
     "title": "Getting Started with Generative AI",
     "date": "2025-01-15",
