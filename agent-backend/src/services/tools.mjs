@@ -88,16 +88,14 @@ export const tools = [
     type: 'function',
     function: {
       name: 'book_slot',
-      description: 'Prepares a calendar booking. This creates a pending action that must be confirmed by the user before booking.',
+      description: 'Prepares a calendar booking for the current visitor profile. Only provide start and end; the server supplies the visitor name and email. This creates a pending action that must be confirmed by the user before booking.',
       parameters: {
         type: 'object',
         properties: {
           start: { type: 'string', format: 'date-time' },
-          end: { type: 'string', format: 'date-time' },
-          name: { type: 'string' },
-          email: { type: 'string', format: 'email' }
+          end: { type: 'string', format: 'date-time' }
         },
-        required: ['start', 'end', 'name', 'email']
+        required: ['start', 'end']
       }
     }
   },
@@ -138,7 +136,7 @@ function truncate(value, maxLength) {
   return value.length > maxLength ? `${value.slice(0, maxLength)}...` : value;
 }
 
-export function buildPendingAction(toolCall) {
+export function buildPendingAction(toolCall, { user } = {}) {
   const type = toolCall?.function?.name;
   const args = parseToolArgs(toolCall);
 
@@ -156,15 +154,21 @@ export function buildPendingAction(toolCall) {
   }
 
   if (type === 'book_slot') {
+    const name = truncate(user?.name || args.name, 120);
+    const email = truncate(user?.email || args.email, 160);
+    if (!name || !email) {
+      throw new Error('User name and email are required before booking.');
+    }
+
     return {
       type,
       label: 'Book calendar slot',
-      summary: `Book ${args.start} to ${args.end} for ${args.name} (${args.email}).`,
+      summary: `Book ${args.start} to ${args.end} using ${name} (${email}) as the contact.`,
       arguments: {
         start: args.start,
         end: args.end,
-        name: truncate(args.name, 120),
-        email: truncate(args.email, 160)
+        name,
+        email
       }
     };
   }

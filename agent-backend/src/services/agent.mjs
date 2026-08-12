@@ -102,10 +102,12 @@ Rules:
 - Before checking availability for a relative date phrase, call calculate_date_range and pass its startDate and endDate to get_available_slots.
 - Email, booking, and cancellation tools prepare pending actions only. The server requires user confirmation before execution.
 - If the user asks to send, book, or cancel and required details are available, call the matching side-effect tool immediately so the server creates the pending action. Do not ask for plain-text confirmation yourself.
+- For bookings, the server uses the visitor profile as the booking contact. Do not invent or pass a different name/email for book_slot.
+- The Visitor profile below is the user chatting with you, not Bagtyyar. Never describe the visitor email as Bagtyyar's email.
 - Never mention internal calendar provider event IDs. Use short booking references shown by the server. For "cancel it" or "cancel my booking", call cancel_booking without a bookingReference so the server uses the latest active booking in the session.
 - Use Active bookings when resolving requests like "cancel the 20th", "cancel first booking", or "cancel latest". Prefer bookingReference when one matches.
 
-User profile:
+Visitor profile:
 - Name: ${user?.name || 'Unknown'}
 - Email: ${user?.email || 'Unknown'}
 
@@ -234,7 +236,10 @@ async function runModel({ session, latestMessage, timezone }) {
     }
 
     if (SIDE_EFFECT_TOOLS.has(toolCall.function?.name)) {
-      const pendingAction = await savePendingAction(session, buildPendingAction(toolCall));
+      const pendingAction = await savePendingAction(
+        session,
+        buildPendingAction(toolCall, { user: session.user })
+      );
       return {
         reply: `Please confirm this action before I proceed:\n\n**${pendingAction.label}**\n\n${pendingAction.summary}`,
         pendingAction

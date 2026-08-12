@@ -131,7 +131,7 @@ export async function bookSlot({ start, end, name, email }) {
   });
 
   return {
-    reply: `✅ Booking confirmed for ${name} on ${start}.`,
+    reply: `✅ Booking confirmed for ${start}. Contact: ${name} (${email}).`,
     booking: {
       providerEventId: res.data.id,
       start: timeMin,
