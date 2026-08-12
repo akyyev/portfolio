@@ -82,6 +82,7 @@ function getDateGuide(timeZone) {
 }
 
 function buildSystemPrompt({ context, timezone, user }) {
+  const bookingSummary = buildBookingSummary(user?.bookings, timezone);
   return {
     role: 'system',
     content: `You are Botfolio, a concise and reliable assistant for Bagtyyar's portfolio.
@@ -102,14 +103,45 @@ Rules:
 - Email, booking, and cancellation tools prepare pending actions only. The server requires user confirmation before execution.
 - If the user asks to send, book, or cancel and required details are available, call the matching side-effect tool immediately so the server creates the pending action. Do not ask for plain-text confirmation yourself.
 - Never mention internal calendar provider event IDs. Use short booking references shown by the server. For "cancel it" or "cancel my booking", call cancel_booking without a bookingReference so the server uses the latest active booking in the session.
+- Use Active bookings when resolving requests like "cancel the 20th", "cancel first booking", or "cancel latest". Prefer bookingReference when one matches.
 
 User profile:
 - Name: ${user?.name || 'Unknown'}
 - Email: ${user?.email || 'Unknown'}
 
+Active bookings:
+${bookingSummary}
+
 Source material:
 ${context || 'No relevant source chunks were found.'}`
   };
+}
+
+function formatBookingDateTime(value, timezone) {
+  try {
+    return new Intl.DateTimeFormat('en-US', {
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      timeZone: timezone
+    }).format(new Date(value));
+  } catch {
+    return value;
+  }
+}
+
+function buildBookingSummary(bookings = [], timezone = 'UTC') {
+  const active = (bookings || []).filter(booking => booking.status === 'booked');
+  if (!active.length) return 'None';
+
+  return active
+    .map((booking, index) =>
+      `${index + 1}. ${booking.reference}: ${formatBookingDateTime(booking.start, timezone)} to ${formatBookingDateTime(booking.end, timezone)}`
+    )
+    .join('\n');
 }
 
 function normalizeUser(user) {
@@ -150,7 +182,12 @@ function createBookingReference() {
 function prepareActionForExecution(action, session) {
   if (action.type !== 'cancel_booking') return action;
 
-  const booking = findBooking(session, action.arguments.bookingReference);
+  const booking = findBooking(session, {
+    reference: action.arguments.bookingReference,
+    bookingDate: action.arguments.bookingDate,
+    start: action.arguments.start,
+    end: action.arguments.end
+  });
   if (!booking) {
     throw new Error('I could not find an active booking to cancel.');
   }
@@ -174,7 +211,14 @@ async function runModel({ session, latestMessage, timezone }) {
     summary: session.summary
   });
   const messages = [
-    buildSystemPrompt({ context, timezone, user: session.user }),
+    buildSystemPrompt({
+      context,
+      timezone,
+      user: {
+        ...(session.user || {}),
+        bookings: session.bookings || []
+      }
+    }),
     ...(session.summary ? [{ role: 'system', content: `Conversation summary: ${session.summary}` }] : []),
     ...(session.messages || []).map(({ role, content }) => ({ role, content }))
   ];

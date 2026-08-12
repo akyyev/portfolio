@@ -122,15 +122,37 @@ export async function addBooking(session, booking) {
   });
 }
 
-export function findBooking(session, reference) {
-  const bookings = session.bookings || [];
+function datePart(value) {
+  return typeof value === 'string' ? value.slice(0, 10) : '';
+}
+
+export function activeBookings(session) {
+  return (session.bookings || []).filter(booking => booking.status === 'booked');
+}
+
+export function findBooking(session, { reference, start, end, bookingDate } = {}) {
+  const bookings = activeBookings(session);
   if (reference) {
     return bookings.find(booking =>
       booking.reference?.toLowerCase() === String(reference).toLowerCase()
     );
   }
 
-  return [...bookings].reverse().find(booking => booking.status === 'booked');
+  if (start || bookingDate) {
+    const targetDate = datePart(start || bookingDate);
+    const targetStart = start ? new Date(start).getTime() : null;
+    const targetEnd = end ? new Date(end).getTime() : null;
+
+    return bookings.find(booking => {
+      const bookingStart = new Date(booking.start).getTime();
+      const bookingEnd = new Date(booking.end).getTime();
+      if (targetStart && bookingStart !== targetStart) return false;
+      if (targetEnd && bookingEnd !== targetEnd) return false;
+      return targetDate ? datePart(booking.start) === targetDate : true;
+    });
+  }
+
+  return [...bookings].reverse()[0];
 }
 
 export async function markBookingCancelled(session, reference) {

@@ -105,13 +105,18 @@ export const tools = [
     type: 'function',
     function: {
       name: 'cancel_booking',
-      description: 'Prepares cancellation of a Botfolio-created calendar booking. This creates a pending action that must be confirmed by the user before cancellation.',
+      description: 'Prepares cancellation of a Botfolio-created calendar booking. Use bookingReference from Active bookings when available. For date-specific cancellation, provide bookingDate or start/end. Omit identifiers only when the user clearly asks to cancel the latest booking. This creates a pending action that must be confirmed by the user before cancellation.',
       parameters: {
         type: 'object',
         properties: {
           bookingReference: {
             type: 'string',
             description: 'Short public booking reference shown to the user, for example BF-ABC123. Omit when cancelling the latest booking in the session.'
+          },
+          bookingDate: {
+            type: 'string',
+            format: 'date',
+            description: 'Booking date in YYYY-MM-DD when the user asks to cancel by date, for example "Cancel August 20th".'
           },
           start: { type: 'string', format: 'date-time' },
           end: { type: 'string', format: 'date-time' },
@@ -170,9 +175,10 @@ export function buildPendingAction(toolCall) {
       label: 'Cancel calendar booking',
       summary: args.start && args.end
         ? `Cancel ${args.bookingReference || 'the latest booking'} from ${args.start} to ${args.end}.`
-        : `Cancel ${args.bookingReference || 'the latest booking'}.`,
+        : `Cancel ${args.bookingReference || args.bookingDate || 'the latest booking'}.`,
       arguments: {
         bookingReference: truncate(args.bookingReference, 40),
+        bookingDate: args.bookingDate,
         start: args.start,
         end: args.end,
         email: truncate(args.email, 160)

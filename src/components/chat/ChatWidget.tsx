@@ -436,7 +436,7 @@ const ChatWidget: React.FC = () => {
                     onClick={() => handlePendingAction('confirm')}
                     disabled={isResolvingAction}
                   >
-                    Confirm
+                    {pendingAction.label.toLowerCase().includes('cancel') ? 'Cancel Booking' : 'Confirm'}
                   </button>
                   <button
                     type="button"
@@ -444,7 +444,7 @@ const ChatWidget: React.FC = () => {
                     onClick={() => handlePendingAction('cancel')}
                     disabled={isResolvingAction}
                   >
-                    Cancel
+                    {pendingAction.label.toLowerCase().includes('cancel') ? 'Keep Booking' : 'Cancel'}
                   </button>
                 </div>
               </div>
