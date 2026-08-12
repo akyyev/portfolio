@@ -4,3 +4,9 @@ export interface Message {
   sender: 'user' | 'bot';
   timestamp: Date;
 }
+
+export interface PendingAction {
+  actionId: string;
+  label: string;
+  summary: string;
+}

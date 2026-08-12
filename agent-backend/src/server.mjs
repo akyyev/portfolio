@@ -4,7 +4,7 @@ import { cancelAction, chat, confirmAction } from './services/agent.mjs';
 import { corsHeaders, methodNotAllowed, readJson, sendJson } from './utils/http.mjs';
 
 function actionIdFromPath(pathname, suffix) {
-  const match = pathname.match(new RegExp(`^/actions/([^/]+)/${suffix}$`));
+  const match = pathname.match(new RegExp(`^/actions/([^/]+)/${suffix}/?$`));
   return match?.[1] || null;
 }
 
@@ -18,7 +18,7 @@ async function route(req, res) {
     return;
   }
 
-  if (url.pathname === '/health') {
+  if (url.pathname === '/health' || url.pathname === '/health/') {
     if (req.method !== 'GET') return methodNotAllowed(res, origin);
     return sendJson(res, 200, {
       ok: true,
@@ -27,7 +27,7 @@ async function route(req, res) {
     }, origin);
   }
 
-  if (url.pathname === '/chat') {
+  if (url.pathname === '/chat' || url.pathname === '/chat/') {
     if (req.method !== 'POST') return methodNotAllowed(res, origin);
     const body = await readJson(req);
     const result = await chat({

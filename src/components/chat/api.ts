@@ -1,17 +1,77 @@
 import axios, { AxiosInstance } from 'axios';
 
-interface ChatMessage {
-  role: 'user' | 'assistant';
-  content: string;
-}
-
 interface UserInfo {
   name: string;
   email: string;
 }
 
+export interface PendingAction {
+  actionId: string;
+  label: string;
+  summary: string;
+}
+
+export interface ChatResponse {
+  reply: string;
+  pendingAction: PendingAction | null;
+}
+
 const API_URL = process.env.REACT_APP_API_URL;
 const SESSION_ID_KEY = 'botfolio-session-id';
+const SESSION_PROFILE_KEY = 'botfolio-session-profile';
+const SESSION_TTL_MS = 6 * 60 * 60 * 1000;
+
+interface StoredValue<T> {
+  value: T;
+  expiry: number;
+}
+
+const setWithTTL = <T>(key: string, value: T): void => {
+  localStorage.setItem(key, JSON.stringify({
+    value,
+    expiry: Date.now() + SESSION_TTL_MS,
+  }));
+};
+
+const getWithTTL = <T>(key: string): T | null => {
+  const raw = localStorage.getItem(key);
+  if (!raw) return null;
+
+  try {
+    const parsed = JSON.parse(raw) as StoredValue<T>;
+    if (!parsed || typeof parsed.expiry !== 'number' || Date.now() > parsed.expiry) {
+      localStorage.removeItem(key);
+      return null;
+    }
+    return parsed.value;
+  } catch {
+    localStorage.removeItem(key);
+    return null;
+  }
+};
+
+export const getStoredSessionId = (): string | null => getWithTTL<string>(SESSION_ID_KEY);
+
+export const getStoredSessionProfile = (): UserInfo | null => {
+  const profile = getWithTTL<UserInfo>(SESSION_PROFILE_KEY);
+  if (!profile?.name || !profile?.email) {
+    localStorage.removeItem(SESSION_PROFILE_KEY);
+    return null;
+  }
+  return profile;
+};
+
+export const storeSessionProfile = (userInfo: UserInfo): void => {
+  setWithTTL(SESSION_PROFILE_KEY, userInfo);
+};
+
+const storeSessionId = (sessionId: string): void => {
+  setWithTTL(SESSION_ID_KEY, sessionId);
+};
+
+const refreshSessionProfile = (userInfo?: UserInfo): void => {
+  if (userInfo) storeSessionProfile(userInfo);
+};
 
 const getAxiosInstance = (): AxiosInstance | null => {
   if (!API_URL) return null;
@@ -21,10 +81,19 @@ const getAxiosInstance = (): AxiosInstance | null => {
   });
 };
 
+const getActionUrl = (actionId: string, action: 'confirm' | 'cancel'): string => {
+  if (!API_URL) throw new Error('Chat API is not configured. Please set REACT_APP_API_URL.');
+
+  const url = new URL(API_URL, window.location.origin);
+  url.pathname = url.pathname.replace(/\/chat\/?$/, '');
+  url.pathname = `${url.pathname.replace(/\/$/, '')}/actions/${actionId}/${action}`;
+  return url.toString();
+};
+
 export const sendChatMessage = async (
-  messages: ChatMessage[],
+  message: string,
   userInfo?: UserInfo
-): Promise<string> => {
+): Promise<ChatResponse> => {
   const axiosInstance = getAxiosInstance();
   
   if (!axiosInstance) {
@@ -32,21 +101,52 @@ export const sendChatMessage = async (
   }
 
   try {
+    const sessionId = getStoredSessionId();
     const payload = {
-      messages,
-      sessionId: localStorage.getItem(SESSION_ID_KEY) || undefined,
+      message,
+      sessionId: sessionId || undefined,
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-      ...(userInfo && { user: userInfo }),
+      ...(!sessionId && userInfo && { user: userInfo }),
     };
-    const response = await axiosInstance.post('/', payload);
+    const response = await axiosInstance.post('', payload);
     if (typeof response.data.sessionId === 'string') {
-      localStorage.setItem(SESSION_ID_KEY, response.data.sessionId);
+      storeSessionId(response.data.sessionId);
+      refreshSessionProfile(userInfo);
     }
-    return response.data.reply;
+    return {
+      reply: response.data.reply,
+      pendingAction: response.data.pendingAction || null,
+    };
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : String(error);
     console.error('API request failed:', msg);
     throw new Error('Hmm… looks like I\'m having some issues. Please try again.');
+  }
+};
+
+export const resolvePendingAction = async (
+  actionId: string,
+  action: 'confirm' | 'cancel'
+): Promise<ChatResponse> => {
+  const sessionId = getStoredSessionId();
+  if (!sessionId) {
+    throw new Error('Session expired. Please start a new chat.');
+  }
+
+  try {
+    const response = await axios.post(
+      getActionUrl(actionId, action),
+      { sessionId },
+      { headers: { 'Content-Type': 'application/json' } }
+    );
+    return {
+      reply: response.data.reply,
+      pendingAction: response.data.pendingAction || null,
+    };
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : String(error);
+    console.error('Action request failed:', msg);
+    throw new Error('Hmm… looks like I could not complete that action. Please try again.');
   }
 };
 

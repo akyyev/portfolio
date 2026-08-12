@@ -3,9 +3,10 @@ import { getPortfolioContext } from './rag.mjs';
 import { invokeModel } from './model.mjs';
 import {
   appendMessage,
+  claimPendingAction,
   deletePendingAction,
-  getPendingAction,
   getSession,
+  releasePendingActionClaim,
   savePendingAction,
   saveSession
 } from './sessionStore.mjs';
@@ -140,13 +141,22 @@ export async function chat({ sessionId, message, timezone, user }) {
 }
 
 export async function confirmAction({ sessionId, actionId }) {
-  const action = await getPendingAction(actionId);
-  if (!action || action.sessionId !== sessionId) {
+  const { action, claimed } = await claimPendingAction(actionId, sessionId);
+  if (!action) {
     throw new Error('Pending action not found or expired.');
   }
+  if (!claimed) {
+    throw new Error('Pending action is already being processed.');
+  }
 
-  const result = await executePendingAction(action);
-  await deletePendingAction(actionId);
+  let result;
+  try {
+    result = await executePendingAction(action);
+    await deletePendingAction(actionId);
+  } catch (error) {
+    await releasePendingActionClaim(actionId);
+    throw error;
+  }
 
   const session = await getSession(sessionId);
   await saveSession({ ...session, pendingActionId: null });
@@ -159,8 +169,11 @@ export async function confirmAction({ sessionId, actionId }) {
 }
 
 export async function cancelAction({ sessionId, actionId }) {
-  const action = await getPendingAction(actionId);
-  if (action && action.sessionId === sessionId) {
+  const { action, claimed } = await claimPendingAction(actionId, sessionId);
+  if (action && !claimed) {
+    throw new Error('Pending action is already being processed.');
+  }
+  if (action && claimed) {
     await deletePendingAction(actionId);
   }
 

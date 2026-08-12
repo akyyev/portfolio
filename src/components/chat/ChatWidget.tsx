@@ -1,8 +1,15 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import ChatMessage from './ChatMessage';
 import TypingIndicator from './TypingIndicator';
-import { Message } from './types';
-import { sendChatMessage, isApiConfigured } from './api';
+import { Message, PendingAction } from './types';
+import {
+  getStoredSessionId,
+  getStoredSessionProfile,
+  isApiConfigured,
+  resolvePendingAction,
+  sendChatMessage,
+  storeSessionProfile,
+} from './api';
 import chatbotIcon from '../../assets/images/image.png';
 import robotAvatar from './robotAvatar.png';
 import '../../assets/styles/ChatWidget.scss';
@@ -31,23 +38,15 @@ interface UserInfo {
   email: string;
 }
 
-// Convert messages to API format
-const formatMessagesForApi = (messages: Message[]): { role: 'user' | 'assistant'; content: string }[] => {
-  return messages
-    .filter(msg => msg.id !== 'welcome-personal')
-    .map(msg => ({
-      role: msg.sender === 'user' ? 'user' : 'assistant',
-      content: msg.content,
-    }));
-};
-
 const ChatWidget: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [showForm, setShowForm] = useState(false);
-  const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+  const [userInfo, setUserInfo] = useState<UserInfo | null>(() => getStoredSessionProfile());
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [pendingAction, setPendingAction] = useState<PendingAction | null>(null);
+  const [isResolvingAction, setIsResolvingAction] = useState(false);
   const [showWidget, setShowWidget] = useState(false);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -64,7 +63,7 @@ const ChatWidget: React.FC = () => {
   // Scroll to bottom when messages change
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages, isTyping]);
+  }, [messages, isTyping, pendingAction]);
 
   // Focus input when chat opens
   useEffect(() => {
@@ -104,7 +103,7 @@ const ChatWidget: React.FC = () => {
   }, [showForm, isOpen]);
 
   const handleToggle = () => {
-    if (!userInfo) {
+    if (!userInfo && !getStoredSessionId()) {
       setShowForm(true);
     } else {
       setIsOpen(prev => !prev);
@@ -118,14 +117,16 @@ const ChatWidget: React.FC = () => {
     const email = formData.get('email') as string;
     
     if (name?.trim() && email?.trim()) {
-      setUserInfo({ name, email });
+      const nextUserInfo = { name: name.trim(), email: email.trim() };
+      setUserInfo(nextUserInfo);
+      storeSessionProfile(nextUserInfo);
       setShowForm(false);
       setIsOpen(true);
       
       // Personalized welcome
       setMessages([{
         id: 'welcome-personal',
-        content: `Hey **${name}**! 👋 Thanks for stopping by. I'm Botfolio, here to help you explore Bagtyyar's portfolio. What would you like to know?`,
+        content: `Hey **${nextUserInfo.name}**! 👋 Thanks for stopping by. I'm Botfolio, here to help you explore Bagtyyar's portfolio. What would you like to know?`,
         sender: 'bot',
         timestamp: new Date(),
       }]);
@@ -159,16 +160,12 @@ const ChatWidget: React.FC = () => {
         throw new Error('Chat is currently unavailable. Please try the contact form instead!');
       }
 
-      // Format message history for API
-      const currentMessages = [...messages, userMessage];
-      const apiMessages = formatMessagesForApi(currentMessages);
-      
-      // Call API
-      const reply = await sendChatMessage(apiMessages, userInfo ?? undefined);
+      const response = await sendChatMessage(text, userInfo ?? undefined);
+      setPendingAction(response.pendingAction);
 
       const botResponse: Message = {
         id: `bot-${Date.now()}`,
-        content: reply,
+        content: response.reply,
         sender: 'bot',
         timestamp: new Date(),
       };
@@ -195,7 +192,49 @@ const ChatWidget: React.FC = () => {
     } finally {
       setIsTyping(false);
     }
-  }, [inputValue, messages, userInfo]);
+  }, [inputValue, userInfo]);
+
+  const handlePendingAction = useCallback(async (action: 'confirm' | 'cancel') => {
+    if (!pendingAction) return;
+
+    const userMessage: Message = {
+      id: `action-${action}-${Date.now()}`,
+      content: action === 'confirm' ? 'Confirm' : 'Cancel',
+      sender: 'user',
+      timestamp: new Date(),
+    };
+
+    setMessages(prev => [...prev, userMessage]);
+    setIsResolvingAction(true);
+    setIsTyping(true);
+
+    try {
+      const response = await resolvePendingAction(pendingAction.actionId, action);
+      setPendingAction(response.pendingAction);
+      setMessages(prev => [
+        ...prev,
+        {
+          id: `bot-${Date.now()}`,
+          content: response.reply,
+          sender: 'bot',
+          timestamp: new Date(),
+        },
+      ]);
+    } catch (error) {
+      const errorMessage: Message = {
+        id: `error-${Date.now()}`,
+        content: error instanceof Error
+          ? error.message
+          : 'Hmm… looks like I could not complete that action. Please try again.',
+        sender: 'bot',
+        timestamp: new Date(),
+      };
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
+      setIsResolvingAction(false);
+      setIsTyping(false);
+    }
+  }, [pendingAction]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -230,7 +269,7 @@ const ChatWidget: React.FC = () => {
       )}
 
       {/* User Info Form */}
-      {showForm && !userInfo && (
+      {showForm && !userInfo && !getStoredSessionId() && (
         <form 
           className="chat-widget__form" 
           onSubmit={handleFormSubmit}
@@ -275,7 +314,7 @@ const ChatWidget: React.FC = () => {
       )}
 
       {/* Chat Window */}
-      {isOpen && userInfo && (
+      {isOpen && (userInfo || getStoredSessionId()) && (
         <div 
           className="chat-widget__window" 
           ref={chatWindowRef}
@@ -318,6 +357,30 @@ const ChatWidget: React.FC = () => {
                   <img src={robotAvatar} alt="Bot" />
                 </div>
                 <TypingIndicator />
+              </div>
+            )}
+            {pendingAction && !isTyping && (
+              <div className="chat-widget__pending-action" role="group" aria-label="Pending action confirmation">
+                <div className="chat-widget__pending-action-title">{pendingAction.label}</div>
+                <div className="chat-widget__pending-action-summary">{pendingAction.summary}</div>
+                <div className="chat-widget__pending-action-buttons">
+                  <button
+                    type="button"
+                    className="chat-widget__pending-action-confirm"
+                    onClick={() => handlePendingAction('confirm')}
+                    disabled={isResolvingAction}
+                  >
+                    Confirm
+                  </button>
+                  <button
+                    type="button"
+                    className="chat-widget__pending-action-cancel"
+                    onClick={() => handlePendingAction('cancel')}
+                    disabled={isResolvingAction}
+                  >
+                    Cancel
+                  </button>
+                </div>
               </div>
             )}
             <div ref={messagesEndRef} />

@@ -4,6 +4,7 @@ import { store } from './redisStore.mjs';
 
 const sessionKey = sessionId => `botfolio:session:${sessionId}`;
 const pendingKey = actionId => `botfolio:pending:${actionId}`;
+const pendingLockKey = actionId => `botfolio:pending-lock:${actionId}`;
 
 function safeJson(raw) {
   if (!raw) return null;
@@ -77,6 +78,30 @@ export async function getPendingAction(actionId) {
   return safeJson(await store.get(pendingKey(actionId)));
 }
 
+export async function claimPendingAction(actionId, sessionId) {
+  const action = await getPendingAction(actionId);
+  if (!action || action.sessionId !== sessionId) {
+    return { action: null, claimed: false };
+  }
+
+  const claimed = await store.setIfAbsent(
+    pendingLockKey(actionId),
+    sessionId,
+    config.pendingActionTtlSeconds
+  );
+
+  return { action, claimed };
+}
+
 export async function deletePendingAction(actionId) {
   await store.delete(pendingKey(actionId));
+  try {
+    await store.delete(pendingLockKey(actionId));
+  } catch (error) {
+    console.warn('Failed to delete pending action lock:', error.message);
+  }
+}
+
+export async function releasePendingActionClaim(actionId) {
+  await store.delete(pendingLockKey(actionId));
 }

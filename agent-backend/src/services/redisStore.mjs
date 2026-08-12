@@ -120,6 +120,11 @@ class RedisStore {
     return this.command(['SET', key, JSON.stringify(value), 'EX', ttlSeconds]);
   }
 
+  async setIfAbsent(key, value, ttlSeconds) {
+    const result = await this.command(['SET', key, value, 'NX', 'EX', ttlSeconds]);
+    return result === 'OK';
+  }
+
   async delete(key) {
     return this.command(['DEL', key]);
   }
@@ -146,6 +151,17 @@ class MemoryStore {
       expiresAt: Date.now() + ttlSeconds * 1000
     });
     return 'OK';
+  }
+
+  setIfAbsent(key, value, ttlSeconds) {
+    const existing = this.get(key);
+    if (existing !== null) return false;
+
+    this.items.set(key, {
+      value,
+      expiresAt: Date.now() + ttlSeconds * 1000
+    });
+    return true;
   }
 
   delete(key) {
