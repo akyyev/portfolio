@@ -31,6 +31,7 @@ export async function getSession(sessionId) {
     user: null,
     summary: '',
     messages: [],
+    bookings: [],
     pendingActionId: null
   };
 }
@@ -39,7 +40,8 @@ export async function saveSession(session) {
   const next = {
     ...session,
     updatedAt: new Date().toISOString(),
-    messages: (session.messages || []).slice(-config.maxStoredMessages)
+    messages: (session.messages || []).slice(-config.maxStoredMessages),
+    bookings: (session.bookings || []).slice(-10)
   };
   await store.setJson(sessionKey(next.sessionId), next, config.sessionTtlSeconds);
   return next;
@@ -104,4 +106,40 @@ export async function deletePendingAction(actionId) {
 
 export async function releasePendingActionClaim(actionId) {
   await store.delete(pendingLockKey(actionId));
+}
+
+export async function addBooking(session, booking) {
+  return saveSession({
+    ...session,
+    bookings: [
+      ...(session.bookings || []),
+      {
+        ...booking,
+        createdAt: new Date().toISOString(),
+        status: 'booked'
+      }
+    ]
+  });
+}
+
+export function findBooking(session, reference) {
+  const bookings = session.bookings || [];
+  if (reference) {
+    return bookings.find(booking =>
+      booking.reference?.toLowerCase() === String(reference).toLowerCase()
+    );
+  }
+
+  return [...bookings].reverse().find(booking => booking.status === 'booked');
+}
+
+export async function markBookingCancelled(session, reference) {
+  return saveSession({
+    ...session,
+    bookings: (session.bookings || []).map(booking =>
+      booking.reference === reference
+        ? { ...booking, status: 'cancelled', cancelledAt: new Date().toISOString() }
+        : booking
+    )
+  });
 }

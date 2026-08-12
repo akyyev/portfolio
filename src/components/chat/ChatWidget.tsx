@@ -42,6 +42,41 @@ interface UserInfo {
   email: string;
 }
 
+const CONFIRMATION_REPLIES = new Set([
+  'yes',
+  'y',
+  'yeah',
+  'yep',
+  'sure',
+  'ok',
+  'okay',
+  'confirm',
+  'confirmed',
+  'go ahead',
+  'do it',
+  'proceed',
+]);
+
+const CANCELLATION_REPLIES = new Set([
+  'no',
+  'n',
+  'nope',
+  'cancel',
+  'cancel it',
+  'never mind',
+  'nevermind',
+  'stop',
+  'do not',
+  "don't",
+]);
+
+const normalizeActionReply = (value: string): string => (
+  value
+    .trim()
+    .toLowerCase()
+    .replace(/[.!?]+$/g, '')
+);
+
 const ChatWidget: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [showForm, setShowForm] = useState(false);
@@ -145,10 +180,7 @@ const ChatWidget: React.FC = () => {
     }
   };
 
-  const sendMessage = useCallback(async () => {
-    const text = inputValue.trim();
-    if (!text) return;
-
+  const addUserMessage = useCallback((text: string) => {
     const userMessage: Message = {
       id: `user-${Date.now()}`,
       content: text,
@@ -157,6 +189,70 @@ const ChatWidget: React.FC = () => {
     };
 
     setMessages(prev => [...prev, userMessage]);
+  }, []);
+
+  const handlePendingAction = useCallback(async (
+    action: 'confirm' | 'cancel',
+    displayText?: string
+  ) => {
+    if (!pendingAction) return;
+
+    addUserMessage(displayText || (action === 'confirm' ? 'Confirm' : 'Cancel'));
+    setIsResolvingAction(true);
+    setIsTyping(true);
+
+    try {
+      const response = await resolvePendingAction(pendingAction.actionId, action);
+      setPendingAction(response.pendingAction);
+      setMessages(prev => [
+        ...prev,
+        {
+          id: `bot-${Date.now()}`,
+          content: response.reply,
+          sender: 'bot',
+          timestamp: new Date(),
+        },
+      ]);
+    } catch (error) {
+      const errorMessage: Message = {
+        id: `error-${Date.now()}`,
+        content: error instanceof Error
+          ? error.message
+          : 'Hmm… looks like I could not complete that action. Please try again.',
+        sender: 'bot',
+        timestamp: new Date(),
+      };
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
+      setIsResolvingAction(false);
+      setIsTyping(false);
+    }
+  }, [addUserMessage, pendingAction]);
+
+  const sendMessage = useCallback(async () => {
+    const text = inputValue.trim();
+    if (!text) return;
+
+    const actionReply = normalizeActionReply(text);
+    if (pendingAction && CONFIRMATION_REPLIES.has(actionReply)) {
+      setInputValue('');
+      if (inputRef.current) {
+        inputRef.current.style.height = 'auto';
+      }
+      await handlePendingAction('confirm', text);
+      return;
+    }
+
+    if (pendingAction && CANCELLATION_REPLIES.has(actionReply)) {
+      setInputValue('');
+      if (inputRef.current) {
+        inputRef.current.style.height = 'auto';
+      }
+      await handlePendingAction('cancel', text);
+      return;
+    }
+
+    addUserMessage(text);
     setInputValue('');
     
     // Reset textarea height
@@ -204,49 +300,7 @@ const ChatWidget: React.FC = () => {
     } finally {
       setIsTyping(false);
     }
-  }, [inputValue, userInfo]);
-
-  const handlePendingAction = useCallback(async (action: 'confirm' | 'cancel') => {
-    if (!pendingAction) return;
-
-    const userMessage: Message = {
-      id: `action-${action}-${Date.now()}`,
-      content: action === 'confirm' ? 'Confirm' : 'Cancel',
-      sender: 'user',
-      timestamp: new Date(),
-    };
-
-    setMessages(prev => [...prev, userMessage]);
-    setIsResolvingAction(true);
-    setIsTyping(true);
-
-    try {
-      const response = await resolvePendingAction(pendingAction.actionId, action);
-      setPendingAction(response.pendingAction);
-      setMessages(prev => [
-        ...prev,
-        {
-          id: `bot-${Date.now()}`,
-          content: response.reply,
-          sender: 'bot',
-          timestamp: new Date(),
-        },
-      ]);
-    } catch (error) {
-      const errorMessage: Message = {
-        id: `error-${Date.now()}`,
-        content: error instanceof Error
-          ? error.message
-          : 'Hmm… looks like I could not complete that action. Please try again.',
-        sender: 'bot',
-        timestamp: new Date(),
-      };
-      setMessages(prev => [...prev, errorMessage]);
-    } finally {
-      setIsResolvingAction(false);
-      setIsTyping(false);
-    }
-  }, [pendingAction]);
+  }, [addUserMessage, handlePendingAction, inputValue, pendingAction, userInfo]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {

@@ -131,7 +131,14 @@ export async function bookSlot({ start, end, name, email }) {
   });
 
   return {
-    reply: `✅ Booking confirmed for ${name} on ${start}. Booking ID: ${res.data.id}`
+    reply: `✅ Booking confirmed for ${name} on ${start}.`,
+    booking: {
+      providerEventId: res.data.id,
+      start: timeMin,
+      end: timeMax,
+      name,
+      email
+    }
   };
 }
 
@@ -174,5 +181,5 @@ export async function cancelBooking({ bookingId, start, end, email }) {
     }
   });
 
-  return { reply: `🗑️ Booking with ID ${bookingId} has been cancelled.` };
+  return { reply: '🗑️ Booking has been cancelled.' };
 }

@@ -2,10 +2,13 @@ import { config } from '../config.mjs';
 import { getPortfolioContext } from './rag.mjs';
 import { invokeModel } from './model.mjs';
 import {
+  addBooking,
   appendMessage,
   claimPendingAction,
   deletePendingAction,
+  findBooking,
   getSession,
+  markBookingCancelled,
   releasePendingActionClaim,
   savePendingAction,
   saveSession
@@ -97,6 +100,8 @@ Rules:
 - For relative dates like "tomorrow", "after 5 days", "this week", or "next week", interpret the user's phrase and call calculate_date_range for the math. Do not recalculate weekdays from memory.
 - Before checking availability for a relative date phrase, call calculate_date_range and pass its startDate and endDate to get_available_slots.
 - Email, booking, and cancellation tools prepare pending actions only. The server requires user confirmation before execution.
+- If the user asks to send, book, or cancel and required details are available, call the matching side-effect tool immediately so the server creates the pending action. Do not ask for plain-text confirmation yourself.
+- Never mention internal calendar provider event IDs. Use short booking references shown by the server. For "cancel it" or "cancel my booking", call cancel_booking without a bookingReference so the server uses the latest active booking in the session.
 
 User profile:
 - Name: ${user?.name || 'Unknown'}
@@ -131,6 +136,36 @@ function modelReply(result) {
     throw new Error('Model returned an empty reply.');
   }
   return reply;
+}
+
+function createBookingReference() {
+  const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code = 'BF-';
+  for (let i = 0; i < 6; i += 1) {
+    code += alphabet[Math.floor(Math.random() * alphabet.length)];
+  }
+  return code;
+}
+
+function prepareActionForExecution(action, session) {
+  if (action.type !== 'cancel_booking') return action;
+
+  const booking = findBooking(session, action.arguments.bookingReference);
+  if (!booking) {
+    throw new Error('I could not find an active booking to cancel.');
+  }
+
+  return {
+    ...action,
+    arguments: {
+      ...action.arguments,
+      bookingId: booking.providerEventId,
+      start: action.arguments.start || booking.start,
+      end: action.arguments.end || booking.end,
+      email: action.arguments.email || booking.email,
+      bookingReference: booking.reference
+    }
+  };
 }
 
 async function runModel({ session, latestMessage, timezone }) {
@@ -208,16 +243,37 @@ export async function confirmAction({ sessionId, actionId }) {
   }
 
   let result;
+  let session = await getSession(sessionId);
+  const executableAction = prepareActionForExecution(action, session);
   try {
-    result = await executePendingAction(action);
+    result = await executePendingAction(executableAction);
     await deletePendingAction(actionId);
   } catch (error) {
     await releasePendingActionClaim(actionId);
     throw error;
   }
 
-  const session = await getSession(sessionId);
-  await saveSession({ ...session, pendingActionId: null });
+  if (action.type === 'book_slot' && result.booking) {
+    const reference = createBookingReference();
+    session = await addBooking(session, {
+      reference,
+      ...result.booking
+    });
+    result = {
+      ...result,
+      reply: `${result.reply} Reference: ${reference}`
+    };
+  }
+
+  if (action.type === 'cancel_booking') {
+    session = await markBookingCancelled(session, executableAction.arguments.bookingReference);
+    result = {
+      ...result,
+      reply: `${result.reply} Reference: ${executableAction.arguments.bookingReference}`
+    };
+  }
+
+  session = await saveSession({ ...session, pendingActionId: null });
   await appendMessage(session, { role: 'assistant', content: result.reply });
 
   return {

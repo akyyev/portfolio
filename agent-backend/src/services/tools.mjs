@@ -109,12 +109,15 @@ export const tools = [
       parameters: {
         type: 'object',
         properties: {
-          bookingId: { type: 'string' },
+          bookingReference: {
+            type: 'string',
+            description: 'Short public booking reference shown to the user, for example BF-ABC123. Omit when cancelling the latest booking in the session.'
+          },
           start: { type: 'string', format: 'date-time' },
           end: { type: 'string', format: 'date-time' },
           email: { type: 'string', format: 'email' }
         },
-        required: ['bookingId', 'start', 'end']
+        required: []
       }
     }
   }
@@ -165,9 +168,11 @@ export function buildPendingAction(toolCall) {
     return {
       type,
       label: 'Cancel calendar booking',
-      summary: `Cancel booking ${args.bookingId} from ${args.start} to ${args.end}.`,
+      summary: args.start && args.end
+        ? `Cancel ${args.bookingReference || 'the latest booking'} from ${args.start} to ${args.end}.`
+        : `Cancel ${args.bookingReference || 'the latest booking'}.`,
       arguments: {
-        bookingId: truncate(args.bookingId, 200),
+        bookingReference: truncate(args.bookingReference, 40),
         start: args.start,
         end: args.end,
         email: truncate(args.email, 160)
