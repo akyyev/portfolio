@@ -11,6 +11,7 @@ interface UserInfo {
 }
 
 const API_URL = process.env.REACT_APP_API_URL;
+const SESSION_ID_KEY = 'botfolio-session-id';
 
 const getAxiosInstance = (): AxiosInstance | null => {
   if (!API_URL) return null;
@@ -33,10 +34,14 @@ export const sendChatMessage = async (
   try {
     const payload = {
       messages,
+      sessionId: localStorage.getItem(SESSION_ID_KEY) || undefined,
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       ...(userInfo && { user: userInfo }),
     };
     const response = await axiosInstance.post('/', payload);
+    if (typeof response.data.sessionId === 'string') {
+      localStorage.setItem(SESSION_ID_KEY, response.data.sessionId);
+    }
     return response.data.reply;
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : String(error);

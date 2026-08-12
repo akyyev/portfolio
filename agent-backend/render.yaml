@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: botfolio-agent-backend
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: MODEL_PROVIDER
+        value: openai
+      - key: ALLOW_ORIGINS
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: HF_TOKEN
+        sync: false
+      - key: EMAIL_FORMS_ENDPOINT
+        sync: false
+      - key: GOOGLE_SERVICE_ACCOUNT_KEY
+        sync: false
+      - key: REDIS_URL
+        sync: false
