@@ -65,7 +65,11 @@ function normalizeUser(user) {
 
 function cleanMessage(content) {
   const text = String(content || '').trim();
-  if (!text) throw new Error('message is required.');
+  if (!text) {
+    const error = new Error('message is required.');
+    error.statusCode = 400;
+    throw error;
+  }
   return text.slice(0, config.maxMessageLength);
 }
 

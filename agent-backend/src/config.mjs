@@ -20,7 +20,12 @@ export const config = {
   sessionTtlSeconds: Number(process.env.SESSION_TTL_SECONDS || 6 * 60 * 60),
   pendingActionTtlSeconds: Number(process.env.PENDING_ACTION_TTL_SECONDS || 15 * 60),
   maxStoredMessages: Number(process.env.MAX_STORED_MESSAGES || 10),
-  maxMessageLength: Number(process.env.MAX_MESSAGE_LENGTH || 4000)
+  maxMessageLength: Number(process.env.MAX_MESSAGE_LENGTH || 4000),
+  maxRequestBytes: Number(process.env.MAX_REQUEST_BYTES || 32 * 1024),
+  ipRateLimitWindowSeconds: Number(process.env.IP_RATE_LIMIT_WINDOW_SECONDS || 60),
+  ipRateLimitMax: Number(process.env.IP_RATE_LIMIT_MAX || 25),
+  sessionRateLimitWindowSeconds: Number(process.env.SESSION_RATE_LIMIT_WINDOW_SECONDS || 60),
+  sessionRateLimitMax: Number(process.env.SESSION_RATE_LIMIT_MAX || 12)
 };
 
 export const modelConfig = {

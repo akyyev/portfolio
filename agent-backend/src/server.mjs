@@ -1,11 +1,20 @@
 import http from 'node:http';
 import { config } from './config.mjs';
 import { cancelAction, chat, confirmAction } from './services/agent.mjs';
-import { corsHeaders, methodNotAllowed, readJson, sendJson } from './utils/http.mjs';
+import { assertRateLimit } from './services/rateLimiter.mjs';
+import { corsHeaders, isAllowedOrigin, methodNotAllowed, readJson, sendJson } from './utils/http.mjs';
 
 function actionIdFromPath(pathname, suffix) {
   const match = pathname.match(new RegExp(`^/actions/([^/]+)/${suffix}/?$`));
   return match?.[1] || null;
+}
+
+function getClientIp(req) {
+  const forwardedFor = req.headers['x-forwarded-for'];
+  if (typeof forwardedFor === 'string' && forwardedFor.trim()) {
+    return forwardedFor.split(',')[0].trim();
+  }
+  return req.socket.remoteAddress || 'unknown';
 }
 
 async function route(req, res) {
@@ -16,6 +25,10 @@ async function route(req, res) {
     res.writeHead(204, corsHeaders(origin));
     res.end();
     return;
+  }
+
+  if (!isAllowedOrigin(origin)) {
+    return sendJson(res, 403, { error: 'Origin is not allowed.' }, origin);
   }
 
   if (url.pathname === '/health' || url.pathname === '/health/') {
@@ -30,6 +43,11 @@ async function route(req, res) {
   if (url.pathname === '/chat' || url.pathname === '/chat/') {
     if (req.method !== 'POST') return methodNotAllowed(res, origin);
     const body = await readJson(req);
+    await assertRateLimit({
+      ip: getClientIp(req),
+      sessionId: body.sessionId,
+      scope: 'chat'
+    });
     const result = await chat({
       sessionId: body.sessionId,
       message: body.message || body.messages?.at?.(-1)?.content,
@@ -43,6 +61,11 @@ async function route(req, res) {
   if (confirmActionId) {
     if (req.method !== 'POST') return methodNotAllowed(res, origin);
     const body = await readJson(req);
+    await assertRateLimit({
+      ip: getClientIp(req),
+      sessionId: body.sessionId,
+      scope: 'action'
+    });
     const result = await confirmAction({
       sessionId: body.sessionId,
       actionId: confirmActionId
@@ -54,6 +77,11 @@ async function route(req, res) {
   if (cancelActionId) {
     if (req.method !== 'POST') return methodNotAllowed(res, origin);
     const body = await readJson(req);
+    await assertRateLimit({
+      ip: getClientIp(req),
+      sessionId: body.sessionId,
+      scope: 'action'
+    });
     const result = await cancelAction({
       sessionId: body.sessionId,
       actionId: cancelActionId
@@ -69,7 +97,7 @@ const server = http.createServer(async (req, res) => {
     await route(req, res);
   } catch (error) {
     console.error('Request failed:', error.message);
-    sendJson(res, 500, { error: error.message }, req.headers.origin);
+    sendJson(res, error.statusCode || 500, { error: error.message }, req.headers.origin);
   }
 });
 

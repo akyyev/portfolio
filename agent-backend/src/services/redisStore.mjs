@@ -125,6 +125,14 @@ class RedisStore {
     return result === 'OK';
   }
 
+  async incrementWithTtl(key, ttlSeconds) {
+    const value = await this.command(['INCR', key]);
+    if (value === 1) {
+      await this.command(['EXPIRE', key, ttlSeconds]);
+    }
+    return value;
+  }
+
   async delete(key) {
     return this.command(['DEL', key]);
   }
@@ -162,6 +170,15 @@ class MemoryStore {
       expiresAt: Date.now() + ttlSeconds * 1000
     });
     return true;
+  }
+
+  incrementWithTtl(key, ttlSeconds) {
+    const current = Number(this.get(key) || 0) + 1;
+    this.items.set(key, {
+      value: String(current),
+      expiresAt: Date.now() + ttlSeconds * 1000
+    });
+    return current;
   }
 
   delete(key) {

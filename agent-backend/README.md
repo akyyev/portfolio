@@ -20,6 +20,9 @@ Render-friendly backend for Botfolio chat, RAG context, session memory, pending 
 - `GOOGLE_SERVICE_ACCOUNT_KEY`
 - `REDIS_URL`
 - `KNOWLEDGE_DIR` defaults to `data`
+- `MAX_REQUEST_BYTES` defaults to `32768`
+- `IP_RATE_LIMIT_MAX` defaults to `25` per `IP_RATE_LIMIT_WINDOW_SECONDS`, default `60`
+- `SESSION_RATE_LIMIT_MAX` defaults to `12` per `SESSION_RATE_LIMIT_WINDOW_SECONDS`, default `60`
 
 Without `REDIS_URL`, the server uses local in-memory storage for development only.
 Do not expose `REDIS_URL` to the frontend and do not commit the concrete value to git.
