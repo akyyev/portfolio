@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "build": "npm run check",
     "start": "node src/server.mjs",
     "check": "node --check src/server.mjs && node --check src/services/agent.mjs && node --check src/services/calendar.mjs && node --check src/services/redisStore.mjs"
   },

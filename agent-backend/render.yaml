@@ -3,7 +3,7 @@ services:
     name: botfolio-agent-backend
     runtime: node
     plan: free
-    buildCommand: npm install
+    buildCommand: npm install && npm run build
     startCommand: npm start
     healthCheckPath: /health
     envVars:
