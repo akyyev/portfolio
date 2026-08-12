@@ -4,10 +4,14 @@ import TypingIndicator from './TypingIndicator';
 import { Message, PendingAction } from './types';
 import {
   getStoredSessionId,
+  getStoredMessages,
+  getStoredPendingAction,
   getStoredSessionProfile,
   isApiConfigured,
   resolvePendingAction,
   sendChatMessage,
+  storeMessages,
+  storePendingAction,
   storeSessionProfile,
 } from './api';
 import chatbotIcon from '../../assets/images/image.png';
@@ -42,10 +46,10 @@ const ChatWidget: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [userInfo, setUserInfo] = useState<UserInfo | null>(() => getStoredSessionProfile());
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Message[]>(() => getStoredMessages());
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const [pendingAction, setPendingAction] = useState<PendingAction | null>(null);
+  const [pendingAction, setPendingAction] = useState<PendingAction | null>(() => getStoredPendingAction());
   const [isResolvingAction, setIsResolvingAction] = useState(false);
   const [showWidget, setShowWidget] = useState(false);
   
@@ -64,6 +68,14 @@ const ChatWidget: React.FC = () => {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isTyping, pendingAction]);
+
+  useEffect(() => {
+    storeMessages(messages);
+  }, [messages]);
+
+  useEffect(() => {
+    storePendingAction(pendingAction);
+  }, [pendingAction]);
 
   // Focus input when chat opens
   useEffect(() => {

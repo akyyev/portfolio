@@ -6,7 +6,7 @@
   "scripts": {
     "build": "npm run check",
     "start": "node src/server.mjs",
-    "check": "node --check src/server.mjs && node --check src/services/agent.mjs && node --check src/services/calendar.mjs && node --check src/services/rateLimiter.mjs && node --check src/services/redisStore.mjs"
+    "check": "node --check src/server.mjs && node --check src/services/agent.mjs && node --check src/services/calendar.mjs && node --check src/services/dateTools.mjs && node --check src/services/rateLimiter.mjs && node --check src/services/redisStore.mjs"
   },
   "dependencies": {
     "googleapis": "^159.0.0"

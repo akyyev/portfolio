@@ -2,6 +2,12 @@
 
 Render-friendly backend for Botfolio chat, RAG context, session memory, pending tool confirmations, email, and calendar tooling.
 
+## Agent Tools
+
+- `calculate_date_range` converts structured date math into exact timezone-aware ISO ranges. The model interprets phrases like `after 5 days` or `next week`; the tool only does the calculation.
+- `get_available_slots` reads calendar availability.
+- `send_email`, `book_slot`, and `cancel_booking` create pending actions that require explicit user confirmation.
+
 ## Routes
 
 - `GET /health`

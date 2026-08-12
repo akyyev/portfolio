@@ -1,5 +1,6 @@
 import { config } from '../config.mjs';
 import { bookSlot, cancelBooking, getAvailableSlots } from './calendar.mjs';
+import { calculateDateRange } from './dateTools.mjs';
 
 export const SIDE_EFFECT_TOOLS = new Set(['send_email', 'book_slot', 'cancel_booking']);
 
@@ -17,6 +18,54 @@ export const tools = [
           body: { type: 'string', description: 'Message content.' }
         },
         required: ['sender', 'subject']
+      }
+    }
+  },
+  {
+    type: 'function',
+    function: {
+      name: 'calculate_date_range',
+      description: 'Calculate exact timezone-aware ISO date ranges from structured date math. The model should interpret natural language, then call this tool for the calculation before answering date math questions or checking availability.',
+      parameters: {
+        type: 'object',
+        properties: {
+          rangeType: {
+            type: 'string',
+            enum: ['single_day', 'calendar_week', 'calendar_month', 'weekday'],
+            description: 'single_day for today/tomorrow/in N days; calendar_week for this/next week; calendar_month for this/next month; weekday for Friday/next Friday.'
+          },
+          unit: {
+            type: 'string',
+            enum: ['day', 'week', 'month'],
+            description: 'Unit for amount when rangeType is single_day. calendar_week and calendar_month force week/month.'
+          },
+          amount: {
+            type: 'integer',
+            minimum: 0,
+            maximum: 366,
+            description: 'How many units to move from today. Examples: tomorrow is 1 day future; after 5 days is 5 days future; next week is 1 week future; this week is 0 current.'
+          },
+          direction: {
+            type: 'string',
+            enum: ['future', 'past', 'current'],
+            description: 'Use current for this week/month/today, future for tomorrow/next/after, past for previous dates.'
+          },
+          weekStartsOn: {
+            type: 'string',
+            enum: ['sunday', 'monday'],
+            description: 'Week start day for calendar_week. Use monday unless the user asks otherwise.'
+          },
+          weekday: {
+            type: 'string',
+            enum: ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'],
+            description: 'Required when rangeType is weekday.'
+          },
+          timezone: {
+            type: 'string',
+            description: 'IANA timezone such as America/Chicago. If omitted, the server uses the current user timezone.'
+          }
+        },
+        required: ['rangeType', 'direction']
       }
     }
   },
@@ -152,7 +201,14 @@ export async function sendEmail(action) {
   return { reply: `✅ Email sent with subject "${subject}".` };
 }
 
-export async function executeReadOnlyTool(toolCall) {
+export async function executeReadOnlyTool(toolCall, { timezone } = {}) {
+  if (toolCall?.function?.name === 'calculate_date_range') {
+    const args = parseToolArgs(toolCall);
+    return calculateDateRange({
+      ...args,
+      timezone: args.timezone || timezone
+    });
+  }
   if (toolCall?.function?.name === 'get_available_slots') {
     return getAvailableSlots(parseToolArgs(toolCall));
   }

@@ -1,4 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
+import { Message } from './types';
 
 interface UserInfo {
   name: string;
@@ -19,6 +20,8 @@ export interface ChatResponse {
 const API_URL = process.env.REACT_APP_API_URL;
 const SESSION_ID_KEY = 'botfolio-session-id';
 const SESSION_PROFILE_KEY = 'botfolio-session-profile';
+const SESSION_MESSAGES_KEY = 'botfolio-session-messages';
+const SESSION_PENDING_ACTION_KEY = 'botfolio-session-pending-action';
 const SESSION_TTL_MS = 6 * 60 * 60 * 1000;
 
 interface StoredValue<T> {
@@ -63,6 +66,48 @@ export const getStoredSessionProfile = (): UserInfo | null => {
 
 export const storeSessionProfile = (userInfo: UserInfo): void => {
   setWithTTL(SESSION_PROFILE_KEY, userInfo);
+};
+
+function isMessage(value: unknown): value is Message {
+  const message = value as Message;
+  return (
+    typeof message?.id === 'string' &&
+    typeof message.content === 'string' &&
+    (message.sender === 'user' || message.sender === 'bot')
+  );
+}
+
+export const getStoredMessages = (): Message[] => {
+  const messages = getWithTTL<Array<Omit<Message, 'timestamp'> & { timestamp: string }>>(SESSION_MESSAGES_KEY);
+  if (!Array.isArray(messages)) return [];
+
+  return messages
+    .filter(isMessage)
+    .map(message => ({
+      ...message,
+      timestamp: new Date(message.timestamp),
+    }));
+};
+
+export const storeMessages = (messages: Message[]): void => {
+  setWithTTL(SESSION_MESSAGES_KEY, messages.slice(-40));
+};
+
+export const getStoredPendingAction = (): PendingAction | null => {
+  const pendingAction = getWithTTL<PendingAction>(SESSION_PENDING_ACTION_KEY);
+  if (!pendingAction?.actionId || !pendingAction.label || !pendingAction.summary) {
+    localStorage.removeItem(SESSION_PENDING_ACTION_KEY);
+    return null;
+  }
+  return pendingAction;
+};
+
+export const storePendingAction = (pendingAction: PendingAction | null): void => {
+  if (!pendingAction) {
+    localStorage.removeItem(SESSION_PENDING_ACTION_KEY);
+    return;
+  }
+  setWithTTL(SESSION_PENDING_ACTION_KEY, pendingAction);
 };
 
 const storeSessionId = (sessionId: string): void => {
