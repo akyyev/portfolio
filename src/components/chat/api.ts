@@ -23,6 +23,9 @@ const SESSION_PROFILE_KEY = 'botfolio-session-profile';
 const SESSION_MESSAGES_KEY = 'botfolio-session-messages';
 const SESSION_PENDING_ACTION_KEY = 'botfolio-session-pending-action';
 const SESSION_TTL_MS = 6 * 60 * 60 * 1000;
+const WAKE_COOLDOWN_MS = 5 * 60 * 1000;
+
+let lastWakeAt = 0;
 
 interface StoredValue<T> {
   value: T;
@@ -126,13 +129,32 @@ const getAxiosInstance = (): AxiosInstance | null => {
   });
 };
 
-const getActionUrl = (actionId: string, action: 'confirm' | 'cancel'): string => {
+const getBackendUrl = (pathname: string): string => {
   if (!API_URL) throw new Error('Chat API is not configured. Please set REACT_APP_API_URL.');
 
   const url = new URL(API_URL, window.location.origin);
   url.pathname = url.pathname.replace(/\/chat\/?$/, '');
-  url.pathname = `${url.pathname.replace(/\/$/, '')}/actions/${actionId}/${action}`;
+  url.pathname = `${url.pathname.replace(/\/$/, '')}${pathname}`;
   return url.toString();
+};
+
+const getActionUrl = (actionId: string, action: 'confirm' | 'cancel'): string => (
+  getBackendUrl(`/actions/${actionId}/${action}`)
+);
+
+export const wakeChatApi = async (): Promise<void> => {
+  if (!API_URL) return;
+
+  const now = Date.now();
+  if (now - lastWakeAt < WAKE_COOLDOWN_MS) return;
+  lastWakeAt = now;
+
+  try {
+    await axios.get(getBackendUrl('/health'), { timeout: 10000 });
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : String(error);
+    console.info('Chat API wake-up failed:', msg);
+  }
 };
 
 export const sendChatMessage = async (

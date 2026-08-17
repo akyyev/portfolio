@@ -13,6 +13,7 @@ import {
   storeMessages,
   storePendingAction,
   storeSessionProfile,
+  wakeChatApi,
 } from './api';
 import chatbotIcon from '../../assets/images/image.png';
 import robotAvatar from './robotAvatar.png';
@@ -95,7 +96,10 @@ const ChatWidget: React.FC = () => {
 
   // Show widget after delay
   useEffect(() => {
-    const timer = setTimeout(() => setShowWidget(true), 2000);
+    const timer = setTimeout(() => {
+      setShowWidget(true);
+      void wakeChatApi();
+    }, 2000);
     return () => clearTimeout(timer);
   }, []);
 
@@ -150,6 +154,10 @@ const ChatWidget: React.FC = () => {
   }, [showForm, isOpen]);
 
   const handleToggle = () => {
+    if (!isOpen) {
+      void wakeChatApi();
+    }
+
     if (!userInfo && !getStoredSessionId()) {
       setShowForm(true);
     } else {
