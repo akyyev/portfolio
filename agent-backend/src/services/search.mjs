@@ -67,11 +67,15 @@ export async function searchWeb({ query }) {
   }
 
   const data = await response.json();
+  const answer = cleanText(data.Answer || data.AbstractText);
+  const results = normalizeResults(data);
+
   return {
     query: normalizedQuery,
-    answer: cleanText(data.Answer || data.AbstractText),
+    found: Boolean(answer || results.length),
+    answer,
     source: cleanText(data.AbstractSource, 120),
     sourceUrl: data.AbstractURL || '',
-    results: normalizeResults(data)
+    results
   };
 }
