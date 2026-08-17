@@ -74,13 +74,13 @@ export const tools = [
     type: 'function',
     function: {
       name: 'search_web',
-      description: 'Search the web with DuckDuckGo for public, external, or current information that is not available in the portfolio source material. This is read-only and does not require user confirmation.',
+      description: 'Search the web for public, external, or current information that is not available in the portfolio source material. This is read-only and does not require user confirmation.',
       parameters: {
         type: 'object',
         properties: {
           query: {
             type: 'string',
-            description: 'A focused search query. Include the entity, topic, and any relevant date or location.'
+            description: 'A focused search query. Include the entity, topic, and any relevant date or location. For current office holders, name the office, country, and "incumbent".'
           }
         },
         required: ['query']

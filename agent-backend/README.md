@@ -6,7 +6,7 @@ Render-friendly backend for Botfolio chat, RAG context, session memory, pending 
 
 - `calculate_date_range` converts structured date math into exact timezone-aware ISO ranges. The model interprets phrases like `after 5 days` or `next week`; the tool only does the calculation.
 - `get_available_slots` reads calendar availability.
-- `search_web` uses DuckDuckGo's no-key Instant Answer API for lightweight public web lookup.
+- `search_web` uses Wikimedia/Wikipedia APIs by default with DuckDuckGo no-key Instant Answer fallback.
 - `send_email`, `book_slot`, and `cancel_booking` create pending actions that require explicit user confirmation.
 
 ## Routes
@@ -23,6 +23,7 @@ Render-friendly backend for Botfolio chat, RAG context, session memory, pending 
 - `MODEL_PROVIDER` `openai` or `huggingface`
 - `OPENAI_API_KEY`
 - `HF_TOKEN`
+- `SEARCH_PROVIDER` `wikimedia` or `duckduckgo`, defaults to `wikimedia`
 - `EMAIL_FORMS_ENDPOINT`
 - `GOOGLE_SERVICE_ACCOUNT_KEY`
 - `REDIS_URL`

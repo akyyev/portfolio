@@ -13,6 +13,7 @@ export const config = {
   modelProvider: process.env.MODEL_PROVIDER?.toLowerCase() || 'openai',
   openAiApiKey: process.env.OPENAI_API_KEY,
   hfToken: process.env.HF_TOKEN,
+  searchProvider: process.env.SEARCH_PROVIDER?.toLowerCase() || 'wikimedia',
   emailFormsEndpoint: process.env.EMAIL_FORMS_ENDPOINT,
   googleServiceAccountKey: process.env.GOOGLE_SERVICE_ACCOUNT_KEY,
   redisUrl: process.env.REDIS_URL,
