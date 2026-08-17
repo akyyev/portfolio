@@ -33,11 +33,9 @@ async function route(req, res) {
 
   if (url.pathname === '/health' || url.pathname === '/health/') {
     if (req.method !== 'GET') return methodNotAllowed(res, origin);
-    return sendJson(res, 200, {
-      ok: true,
-      modelProvider: config.modelProvider,
-      storage: config.redisUrl ? 'redis' : 'memory'
-    }, origin);
+    res.writeHead(204, corsHeaders(origin));
+    res.end();
+    return;
   }
 
   if (url.pathname === '/chat' || url.pathname === '/chat/') {
