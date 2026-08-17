@@ -22,7 +22,9 @@ export async function invokeModel(payload) {
   });
 
   if (!response.ok) {
-    throw new Error(`Model request failed with status ${response.status}`);
+    const errorBody = await response.text().catch(() => '');
+    const detail = errorBody ? `: ${errorBody.slice(0, 1000)}` : '';
+    throw new Error(`Model request failed with status ${response.status}${detail}`);
   }
 
   return response.json();

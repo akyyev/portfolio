@@ -230,16 +230,18 @@ async function runModel({ session, latestMessage, timezone }) {
 
   for (let i = 0; i < 4; i += 1) {
     result = await invokeModel({ messages, tools, stream: false });
-    const toolCall = result?.choices?.[0]?.message?.tool_calls?.[0];
+    const message = result?.choices?.[0]?.message;
+    const toolCalls = message?.tool_calls || [];
 
-    if (!toolCall) {
+    if (!toolCalls.length) {
       return { reply: modelReply(result) };
     }
 
-    if (SIDE_EFFECT_TOOLS.has(toolCall.function?.name)) {
+    const sideEffectToolCall = toolCalls.find(toolCall => SIDE_EFFECT_TOOLS.has(toolCall.function?.name));
+    if (sideEffectToolCall) {
       const pendingAction = await savePendingAction(
         session,
-        buildPendingAction(toolCall, { user: session.user })
+        buildPendingAction(sideEffectToolCall, { user: session.user })
       );
       return {
         reply: `Please confirm this action before I proceed:\n\n**${pendingAction.label}**\n\n${pendingAction.summary}`,
@@ -247,13 +249,15 @@ async function runModel({ session, latestMessage, timezone }) {
       };
     }
 
-    const toolResult = await executeReadOnlyTool(toolCall, { timezone });
-    messages.push(result.choices[0].message);
-    messages.push({
-      role: 'tool',
-      tool_call_id: toolCall.id,
-      content: JSON.stringify(toolResult)
-    });
+    messages.push(message);
+    for (const toolCall of toolCalls) {
+      const toolResult = await executeReadOnlyTool(toolCall, { timezone });
+      messages.push({
+        role: 'tool',
+        tool_call_id: toolCall.id,
+        content: JSON.stringify(toolResult)
+      });
+    }
   }
 
   throw new Error('Too many tool calls.');
