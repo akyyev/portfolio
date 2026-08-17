@@ -6,6 +6,7 @@ Render-friendly backend for Botfolio chat, RAG context, session memory, pending 
 
 - `calculate_date_range` converts structured date math into exact timezone-aware ISO ranges. The model interprets phrases like `after 5 days` or `next week`; the tool only does the calculation.
 - `get_available_slots` reads calendar availability.
+- `search_web` uses DuckDuckGo's no-key Instant Answer API for lightweight public web lookup.
 - `send_email`, `book_slot`, and `cancel_booking` create pending actions that require explicit user confirmation.
 
 ## Routes
@@ -42,11 +43,7 @@ Use `agent-backend` as the service root directory. The included `render.yaml` ca
 - Health check path: `/health`
 - Add `REDIS_URL` for shared session and pending-action storage. Use Render's internal Redis URL when the web service and Redis are in the same Render account/region, for example `redis://<internal-host>:6379`.
 
-After deploy, `/health` should report Redis-backed storage:
-
-```json
-{"ok":true,"modelProvider":"openai","storage":"redis"}
-```
+After deploy, `/health` should return `204 No Content`.
 
 For the frontend, point `REACT_APP_API_URL` at the deployed chat endpoint, for example:
 

@@ -1,6 +1,7 @@
 import { config } from '../config.mjs';
 import { bookSlot, cancelBooking, getAvailableSlots } from './calendar.mjs';
 import { calculateDateRange } from './dateTools.mjs';
+import { searchWeb } from './search.mjs';
 
 export const SIDE_EFFECT_TOOLS = new Set(['send_email', 'book_slot', 'cancel_booking']);
 
@@ -66,6 +67,23 @@ export const tools = [
           }
         },
         required: ['rangeType', 'direction']
+      }
+    }
+  },
+  {
+    type: 'function',
+    function: {
+      name: 'search_web',
+      description: 'Search the web with DuckDuckGo for public, external, or current information that is not available in the portfolio source material. This is read-only and does not require user confirmation.',
+      parameters: {
+        type: 'object',
+        properties: {
+          query: {
+            type: 'string',
+            description: 'A focused search query. Include the entity, topic, and any relevant date or location.'
+          }
+        },
+        required: ['query']
       }
     }
   },
@@ -226,6 +244,9 @@ export async function executeReadOnlyTool(toolCall, { timezone } = {}) {
   }
   if (toolCall?.function?.name === 'get_available_slots') {
     return getAvailableSlots(parseToolArgs(toolCall));
+  }
+  if (toolCall?.function?.name === 'search_web') {
+    return searchWeb(parseToolArgs(toolCall));
   }
   return { reply: 'Unknown tool call.' };
 }
